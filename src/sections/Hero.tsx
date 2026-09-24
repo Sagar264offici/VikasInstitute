@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { photos } from '../data/images';
 import EduImage from '../components/EduImage';
 import Reveal from '../components/Reveal';
+
+const NeuralField = lazy(() => import('../components/NeuralField'));
 
 export default function Hero() {
   const { t } = useLanguage();
@@ -40,8 +42,11 @@ export default function Hero() {
     };
   }, []);
   return (
-    <section aria-label="Introduction" className="bg-[#f7f7f5] border-b border-[#e5e5e5]">
-      <div className="wrap grid lg:grid-cols-[1.05fr_0.95fr] gap-8 lg:gap-12 items-center py-10 sm:py-14 lg:py-20">
+    <section aria-label="Introduction" className="relative overflow-hidden bg-[#f7f7f5] border-b border-[#e5e5e5]">
+      <Suspense fallback={null}>
+        <NeuralField className="absolute inset-0 pointer-events-none" />
+      </Suspense>
+      <div className="wrap relative grid lg:grid-cols-[1.05fr_0.95fr] gap-8 lg:gap-12 items-center py-10 sm:py-14 lg:py-20">
         <Reveal>
           <p className="inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.08em] border border-[#dadada] bg-white rounded-full px-4 py-2 text-[#333]">
             <span className="w-2 h-2 rounded-full bg-[#2e7d32]" aria-hidden />
