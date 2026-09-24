@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -7,6 +8,37 @@ import Reveal from '../components/Reveal';
 
 export default function Hero() {
   const { t } = useLanguage();
+  const tiltRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = tiltRef.current;
+    if (!el) return;
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let raf = 0;
+    const apply = (rx: number, ry: number) => {
+      el.style.transform = `perspective(1400px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+    };
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const nx = (e.clientX - r.left) / r.width - 0.5;
+      const ny = (e.clientY - r.top) / r.height - 0.5;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => apply(-ny * 10, nx * 14));
+    };
+    const onLeave = () => {
+      cancelAnimationFrame(raf);
+      el.style.transform = '';
+    };
+    el.addEventListener('pointermove', onMove, { passive: true });
+    el.addEventListener('pointerleave', onLeave, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerleave', onLeave);
+    };
+  }, []);
   return (
     <section aria-label="Introduction" className="bg-[#f7f7f5] border-b border-[#e5e5e5]">
       <div className="wrap grid lg:grid-cols-[1.05fr_0.95fr] gap-8 lg:gap-12 items-center py-10 sm:py-14 lg:py-20">
@@ -47,7 +79,7 @@ export default function Hero() {
 
         <Reveal className="lg:justify-self-end w-full">
           <figure>
-            <div className="img-frame rounded-2xl tilt-3d">
+            <div ref={tiltRef} className="img-frame rounded-2xl tilt-3d">
               <EduImage
                 photo={photos.hero}
                 eager
