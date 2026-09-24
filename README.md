@@ -51,7 +51,7 @@ and shows branded placeholders otherwise — no code change needed.
 
 ## Contact
 
-- +91 9711712124 · +91 8679398235
+- +91 8679398235
 - Mannat Complex, Khadri Road, Shyampur, Rishikesh, Dehradun – 249204
 - WhatsApp CTA + Get Directions wired in Contact section
 

@@ -18,6 +18,7 @@ export default function LearnToday() {
           <figure className="relative rounded-2xl overflow-hidden border border-[#e5e5e5] bg-[#111]">
             <EduImage
               photo={photos.learnToday}
+              sizes="100vw"
               className="absolute inset-0 w-full h-full object-cover opacity-45"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" aria-hidden />

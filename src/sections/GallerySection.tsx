@@ -68,7 +68,12 @@ export default function GallerySection() {
               aria-label={`${t.gallery.view}: ${img.alt}`}
               className="relative shrink-0 w-[84%] rounded-2xl overflow-hidden border border-[#e5e5e5] bg-[#e9e9e6] text-left"
             >
-              <EduImage photo={galleryPhotos[i]} className="aspect-[4/3] w-full" fallback={galleryPhotos[i].fallback} />
+              <EduImage
+                photo={galleryPhotos[i]}
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 84vw"
+                className="aspect-[4/3] w-full"
+                fallback={galleryPhotos[i].fallback}
+              />
               <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent pt-10 pb-3.5 px-4 flex items-end justify-between gap-2">
                 <span className="text-white text-[13px] font-bold leading-snug">{img.caption}</span>
                 <Expand size={15} className="text-white/80 shrink-0" aria-hidden />
@@ -104,6 +109,7 @@ export default function GallerySection() {
               >
                 <EduImage
                   photo={galleryPhotos[i]}
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 84vw"
                   className={cn('w-full', i % 3 === 0 ? 'aspect-[4/3]' : i % 3 === 1 ? 'aspect-[3/3.4]' : 'aspect-[16/10]')}
                   fallback={galleryPhotos[i].fallback}
                 />

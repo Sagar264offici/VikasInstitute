@@ -35,7 +35,9 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-[60] bg-[#f7f7f5]/95 backdrop-blur border-b border-[#e5e5e5] transition-shadow',
+        // Solid background on purpose: backdrop-blur repaints every scroll
+        // frame and is a common source of mobile jank. Visual difference at 95% opacity was negligible.
+        'sticky top-0 z-[60] bg-[#f7f7f5] border-b border-[#e5e5e5] transition-shadow',
         scrolled && 'shadow-[0_1px_12px_rgba(0,0,0,0.06)]'
       )}
     >
@@ -84,11 +86,13 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* mobile menu: full-width panel, simple transition */}
+      {/* mobile menu: overlays the page instead of pushing it (no layout shift) */}
       <div
         className={cn(
-          'lg:hidden overflow-hidden border-[#e5e5e5] bg-[#f7f7f5] transition-[max-height,opacity] duration-300',
-          open ? 'max-h-[560px] opacity-100 border-t' : 'max-h-0 opacity-0'
+          'lg:hidden absolute left-0 right-0 top-full overflow-hidden bg-[#f7f7f5] transition-[max-height,opacity] duration-300',
+          open
+            ? 'max-h-[560px] opacity-100 border-b border-[#e5e5e5] shadow-[0_14px_28px_rgba(0,0,0,0.07)]'
+            : 'max-h-0 opacity-0'
         )}
       >
         <nav aria-label="Mobile" className="wrap py-3 flex flex-col">

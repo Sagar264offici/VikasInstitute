@@ -15,8 +15,7 @@ export default function Hero() {
             <span className="w-2 h-2 rounded-full bg-[#2e7d32]" aria-hidden />
             {t.hero.badge}
           </p>
-          <p className="text-[12px] font-bold tracking-[0.22em] text-[#6b6b6b] mt-6">{t.hero.institute}</p>
-          <h1 className="h-display text-[40px] sm:text-[56px] lg:text-[68px] mt-2">
+          <h1 className="h-display text-[40px] sm:text-[56px] lg:text-[68px] mt-6">
             {t.hero.institute}
           </h1>
           <p className="font-serif-accent text-[20px] sm:text-[24px] text-[#333] mt-3">
@@ -48,8 +47,13 @@ export default function Hero() {
 
         <Reveal className="lg:justify-self-end w-full">
           <figure>
-            <div className="img-frame rounded-2xl">
-              <EduImage photo={photos.hero} eager className="aspect-[4/3] lg:aspect-[4/3.4]" />
+            <div className="img-frame rounded-2xl tilt-3d">
+              <EduImage
+                photo={photos.hero}
+                eager
+                sizes="(min-width: 1024px) 46vw, 100vw"
+                className="aspect-[4/3] lg:aspect-[4/3.4]"
+              />
             </div>
             <figcaption className="text-[12.5px] text-[#6b6b6b] mt-3 flex items-center justify-between gap-3">
               <span>{t.about.cardTitle} — {t.about.cardSub}</span>

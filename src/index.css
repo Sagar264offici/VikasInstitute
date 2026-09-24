@@ -123,6 +123,31 @@ body {
   transform: scale(1.02);
 }
 
+/* ---------- 3D hero: subtle floating perspective, transform-only ---------- */
+@media (min-width: 1024px) {
+  .tilt-3d {
+    perspective: 1400px;
+  }
+  .tilt-3d > img {
+    transform-style: preserve-3d;
+    animation: hero-tilt 9s ease-in-out infinite;
+  }
+}
+@keyframes hero-tilt {
+  0%,
+  100% {
+    transform: rotateX(2deg) rotateY(-2.5deg) scale(1.015);
+  }
+  50% {
+    transform: rotateX(-2deg) rotateY(2.5deg) scale(1.02);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tilt-3d > img {
+    animation: none;
+  }
+}
+
 /* ---------- buttons: one primary, one quiet ---------- */
 .btn {
   display: inline-flex;
@@ -193,7 +218,7 @@ body {
     box-shadow 0.2s ease;
 }
 .field-input::placeholder {
-  color: #9a9a9a;
+  color: #757575; /* 4.5:1 on white — previous #9a9a9a failed contrast */
 }
 .field-input:focus {
   outline: none;

@@ -12,7 +12,7 @@ export default function AboutSection() {
       <div className="wrap grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
         <Reveal className="lg:col-span-7">
           <div className="img-frame rounded-2xl">
-            <EduImage photo={photos.about} className="aspect-[4/3]" />
+            <EduImage photo={photos.about} sizes="(min-width: 1024px) 58vw, 100vw" className="aspect-[4/3]" />
           </div>
         </Reveal>
         <div className="lg:col-span-5">

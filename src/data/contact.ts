@@ -3,8 +3,8 @@ export const DIRECT_MAPS_URL = 'https://maps.app.goo.gl/DFKugUJijYjQLq68A';
 export const contactInfo = {
   addressEn: 'Mannat Complex, Khadri Road, Shyampur, Rishikesh, Dehradun – 249204',
   addressHi: 'मन्नत कॉम्प्लेक्स, खादरी रोड, श्यामपुर, ऋषिकेश, देहरादून – 249204',
-  phones: ['+91 9711712124', '+91 8679398235'],
-  phoneLinks: ['tel:+919711712124', 'tel:+918679398235'],
+  phones: ['+91 8679398235'],
+  phoneLinks: ['tel:+918679398235'],
   whatsapp: 'https://wa.me/918679398235?text=Hello%20Vikas%20IT%20Institute%2C%20I%20want%20course%20details',
   // Real navigation destination supplied by institute — always use for directions buttons
   mapsUrl: DIRECT_MAPS_URL,
@@ -56,8 +56,8 @@ export const faqs: FaqItem[] = [
   {
     qEn: 'How can I contact the institute?',
     qHi: 'संस्थान से कैसे संपर्क किया जा सकता है?',
-    aEn: 'Call +91 9711712124 or +91 8679398235, message on WhatsApp, or visit Mannat Complex, Khadri Road, Shyampur, Rishikesh.',
-    aHi: '+91 9711712124 या +91 8679398235 पर कॉल करें, WhatsApp पर संदेश भेजें, या Mannat Complex, Khadri Road, Shyampur, Rishikesh पर आएँ।',
+    aEn: 'Call +91 8679398235, message on WhatsApp, or visit Mannat Complex, Khadri Road, Shyampur, Rishikesh.',
+    aHi: '+91 8679398235 पर कॉल करें, WhatsApp पर संदेश भेजें, या Mannat Complex, Khadri Road, Shyampur, Rishikesh पर आएँ।',
   },
   {
     qEn: 'Where is the institute located?',

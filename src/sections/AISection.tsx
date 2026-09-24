@@ -13,7 +13,7 @@ export default function AISection() {
       <div className="wrap grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
         <Reveal>
           <div className="rounded-2xl overflow-hidden border border-white/15">
-            <EduImage photo={photos.ai} className="aspect-[4/3] w-full object-cover" />
+            <EduImage photo={photos.ai} sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[4/3] w-full object-cover" />
           </div>
         </Reveal>
         <div>

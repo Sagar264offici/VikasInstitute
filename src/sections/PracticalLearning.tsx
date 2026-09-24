@@ -25,7 +25,7 @@ export default function PracticalLearning() {
         <div className="order-2">
           <Reveal>
             <div className="img-frame rounded-2xl">
-              <EduImage photo={photos.practical} className="aspect-[4/3]" />
+              <EduImage photo={photos.practical} sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[4/3]" />
             </div>
           </Reveal>
           <Reveal>
