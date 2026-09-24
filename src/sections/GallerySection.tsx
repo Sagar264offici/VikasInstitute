@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Expand } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { galleryImages } from '../data/gallery';
+import { galleryImages, posterFallback } from '../data/gallery';
 import { Eyebrow, RevealText } from '../components/RevealText';
 import Lightbox, { type GalleryImage } from '../components/Lightbox';
 
@@ -15,6 +15,18 @@ export default function GallerySection() {
     alt: lang === 'hi' ? g.altHi : g.alt,
     caption: lang === 'hi' ? g.captionHi : g.captionEn,
   }));
+  const onImgError = (e: React.SyntheticEvent<HTMLImageElement>, i: number) => {
+    const im = e.currentTarget;
+    if (im.dataset.fb) return;
+    im.dataset.fb = '1';
+    const g = galleryImages[i];
+    im.src = posterFallback(
+      lang === 'hi' ? g.captionHi : g.captionEn,
+      g.fallback.c1,
+      g.fallback.c2,
+      g.fallback.emoji
+    );
+  };
 
   return (
     <section id="gallery" aria-label="Gallery" className="relative bg-[#070b1a] py-24 sm:py-32 overflow-hidden scroll-mt-20">
@@ -28,7 +40,7 @@ export default function GallerySection() {
         </h2>
         <p className="text-white/50 mt-4 max-w-lg text-[15px]">{t.gallery.sub}</p>
 
-        <div className="grid grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 mt-10 auto-rows-[160px] sm:auto-rows-[220px]">
+        <div className="grid grid-cols-2 lg:grid-cols-12 grid-flow-dense gap-3 sm:gap-4 mt-10 auto-rows-[148px] sm:auto-rows-[220px]">
           {images.map((img, i) => {
             const span =
               i === 0
@@ -56,14 +68,12 @@ export default function GallerySection() {
                   alt={img.alt}
                   loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = `https://placehold.co/800x600/0a1024/8db4ff?text=${encodeURIComponent(img.caption)}`;
-                  }}
+                  onError={(e) => onImgError(e, i)}
                 />
                 <span className="absolute inset-0 bg-gradient-to-t from-[#050816]/85 via-transparent to-transparent" />
-                <span className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between gap-2">
-                  <span className="text-white text-[12.5px] sm:text-[14px] font-bold leading-snug">{img.caption}</span>
-                  <span className="shrink-0 w-8 h-8 grid place-items-center rounded-full bg-white/15 backdrop-blur text-white opacity-0 group-hover:opacity-100 transition">
+                <span className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 flex items-end justify-between gap-2">
+                  <span className="text-white text-[12px] sm:text-[14px] font-bold leading-snug min-w-0 line-clamp-3">{img.caption}</span>
+                  <span className="hidden sm:grid shrink-0 w-8 h-8 place-items-center rounded-full bg-white/15 backdrop-blur text-white opacity-0 group-hover:opacity-100 transition">
                     <Expand size={15} />
                   </span>
                 </span>
