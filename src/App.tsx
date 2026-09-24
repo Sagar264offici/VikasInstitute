@@ -1,48 +1,47 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
-import { useLenis } from './hooks/useLenis';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ScrollProgress';
 import ScrollToTop from './components/ScrollToTop';
-import Preloader from './components/Preloader';
-import CustomCursor from './components/CustomCursor';
 import HomePage from './pages/HomePage';
 import CoursesPage from './pages/CoursesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import CourseDetailPage from './pages/CourseDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { useEffect } from 'react';
 
 function ScrollManager() {
   const { pathname, hash } = useLocation();
   useEffect(() => {
     if (hash) {
-      setTimeout(() => {
-        document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' });
-      }, 120);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      const el = document.querySelector(hash);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 80);
+        return;
+      }
     }
+    window.scrollTo(0, 0);
   }, [pathname, hash]);
   return null;
 }
 
-function AnimatedRoutes() {
-  const location = useLocation();
+function Shell() {
+  const { lang } = useLanguage();
   return (
-    <AnimatePresence mode="wait">
-      <motion.main
-        key={location.pathname}
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+    <div className="min-h-screen flex flex-col bg-[#f7f7f5] text-[#111]">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-md focus:m-2 focus:border focus:border-[#111]"
       >
-        <Routes location={location}>
+        {lang === 'hi' ? 'सामग्री पर जाएँ' : 'Skip to content'}
+      </a>
+      <ScrollProgress />
+      <ScrollManager />
+      <Navbar />
+      <div id="main" className="flex-1">
+        <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/courses" element={<CoursesPage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -50,27 +49,6 @@ function AnimatedRoutes() {
           <Route path="/course/:slug" element={<CourseDetailPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </motion.main>
-    </AnimatePresence>
-  );
-}
-
-function Shell() {
-  useLenis(true);
-  const [loaded, setLoaded] = useState(false);
-  const { lang } = useLanguage();
-  return (
-    <div className="min-h-screen flex flex-col bg-[#050816] text-[#eef2ff]">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-full focus:m-2">
-        {lang === 'hi' ? 'सामग्री पर जाएँ' : 'Skip to content'}
-      </a>
-      {!loaded && <Preloader onDone={() => setLoaded(true)} />}
-      <CustomCursor />
-      <ScrollProgress />
-      <ScrollManager />
-      <Navbar />
-      <div id="main" className="flex-1">
-        <AnimatedRoutes />
       </div>
       <Footer />
       <ScrollToTop />

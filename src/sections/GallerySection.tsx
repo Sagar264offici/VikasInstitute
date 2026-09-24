@@ -1,106 +1,121 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Expand } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Expand } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { galleryImages, posterFallback } from '../data/gallery';
-import { Eyebrow, RevealText } from '../components/RevealText';
+import { galleryPhotos } from '../data/images';
+import SectionHeading from '../components/SectionHeading';
+import EduImage from '../components/EduImage';
+import Reveal from '../components/Reveal';
 import Lightbox, { type GalleryImage } from '../components/Lightbox';
+import { cn } from '../lib/utils';
 
+/**
+ * Editorial masonry on desktop, touch-first snap carousel on mobile.
+ * Cards ~84% viewport width on phones, fixed 4/3 ratio, dots included.
+ */
 export default function GallerySection() {
   const { t, lang } = useLanguage();
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [page, setPage] = useState(0);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  const images: GalleryImage[] = galleryImages.map((g) => ({
+  const images: GalleryImage[] = galleryPhotos.map((g) => ({
     src: g.src,
     alt: lang === 'hi' ? g.altHi : g.alt,
     caption: lang === 'hi' ? g.captionHi : g.captionEn,
   }));
-  const onImgError = (e: React.SyntheticEvent<HTMLImageElement>, i: number) => {
-    const im = e.currentTarget;
-    if (im.dataset.fb) return;
-    im.dataset.fb = '1';
-    const g = galleryImages[i];
-    im.src = posterFallback(
-      lang === 'hi' ? g.captionHi : g.captionEn,
-      g.fallback.c1,
-      g.fallback.c2,
-      g.fallback.emoji
-    );
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const i = Math.round(el.scrollLeft / (el.clientWidth * 0.84));
+      setPage(Math.max(0, Math.min(images.length - 1, i)));
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [images.length]);
+
+  const scrollTo = (i: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const clamped = Math.max(0, Math.min(images.length - 1, i));
+    el.scrollTo({ left: clamped * el.clientWidth * 0.84, behavior: 'smooth' });
   };
 
   return (
-    <section id="gallery" aria-label="Gallery" className="relative bg-[#070b1a] py-24 sm:py-32 overflow-hidden scroll-mt-20">
-      <div className="relative z-[2] max-w-7xl mx-auto px-5 sm:px-8">
-        <Eyebrow>{t.gallery.eyebrow}</Eyebrow>
-        <h2 className="display-mega text-[13vw] sm:text-[72px] lg:text-[96px] mt-4">
-          <RevealText>INSIDE THE</RevealText>
-          <RevealText delay={0.06}>
-            <span className="text-stroke">CAMPUS.</span>
-          </RevealText>
-        </h2>
-        <p className="text-white/50 mt-4 max-w-lg text-[15px]">{t.gallery.sub}</p>
-
-        <div className="grid grid-cols-2 lg:grid-cols-12 grid-flow-dense gap-3 sm:gap-4 mt-10 auto-rows-[148px] sm:auto-rows-[220px]">
-          {images.map((img, i) => {
-            const span =
-              i === 0
-                ? 'col-span-1 lg:col-span-5 row-span-2'
-                : i === 1
-                  ? 'col-span-1 lg:col-span-4 row-span-1'
-                  : i === 2
-                    ? 'col-span-2 lg:col-span-7 row-span-1'
-                    : 'col-span-1 lg:col-span-3 row-span-1';
-            const rot = i % 2 === 0 ? 'lg:rotate-[-1deg]' : 'lg:rotate-[1deg]';
-            return (
-              <motion.button
-                key={i}
-                initial={{ opacity: 0, y: 30, clipPath: 'inset(12% round 24px)' }}
-                whileInView={{ opacity: 1, y: 0, clipPath: 'inset(0% round 24px)' }}
-                viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.7, delay: (i % 3) * 0.08 }}
-                onClick={() => setLightbox(i)}
-                data-cursor="VIEW"
-                aria-label={`${t.gallery.view}: ${img.alt}`}
-                className={`group relative overflow-hidden text-left border border-white/10 hover:border-white/30 transition ${span} ${rot} rounded-[24px]`}
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  onError={(e) => onImgError(e, i)}
-                />
-                <span className="absolute inset-0 bg-gradient-to-t from-[#050816]/85 via-transparent to-transparent" />
-                <span className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 flex items-end justify-between gap-2">
-                  <span className="text-white text-[12px] sm:text-[14px] font-bold leading-snug min-w-0 line-clamp-3">{img.caption}</span>
-                  <span className="hidden sm:grid shrink-0 w-8 h-8 place-items-center rounded-full bg-white/15 backdrop-blur text-white opacity-0 group-hover:opacity-100 transition">
-                    <Expand size={15} />
-                  </span>
-                </span>
-              </motion.button>
-            );
-          })}
-          {/* typographic filler tile */}
-          <div className="col-span-1 lg:col-span-4 row-span-1 rounded-[24px] bg-gradient-to-br from-[#ff7a00] to-[#ffb000] p-5 flex flex-col justify-between lg:rotate-[-1deg] overflow-hidden relative">
-            <span className="font-mono text-[11px] font-bold tracking-widest text-black/60">RISHIKESH • 249204</span>
-            <span className="font-display font-extrabold text-[24px] sm:text-[32px] leading-tight text-[#050816]">
-              {lang === 'hi' ? (
-                <>
-                  आज सीखें,
-                  <br />
-                  कल नेतृत्व करें।
-                </>
-              ) : (
-                <>
-                  LEARN TODAY,
-                  <br />
-                  LEAD TOMORROW.
-                </>
-              )}
-            </span>
+    <section id="gallery" aria-label="Gallery" className="section scroll-mt-20 overflow-hidden">
+      <div className="wrap">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <SectionHeading eyebrow={t.gallery.eyebrow} title={t.gallery.title} sub={t.gallery.sub} />
+          <div className="hidden md:flex gap-2">
+            <button onClick={() => scrollTo(page - 1)} aria-label={t.gallery.prev} className="w-11 h-11 grid place-items-center rounded-full border border-[#dadada] hover:border-[#111] hover:bg-[#111] hover:text-white transition-colors">
+              <ChevronLeft size={19} />
+            </button>
+            <button onClick={() => scrollTo(page + 1)} aria-label={t.gallery.next} className="w-11 h-11 grid place-items-center rounded-full border border-[#dadada] hover:border-[#111] hover:bg-[#111] hover:text-white transition-colors">
+              <ChevronRight size={19} />
+            </button>
           </div>
         </div>
       </div>
+
+      {/* mobile: snap carousel */}
+      <Reveal className="md:hidden mt-7">
+        <div ref={trackRef} className="snap-row flex gap-3 overflow-x-auto no-scrollbar px-4 pb-1">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setLightbox(i)}
+              aria-label={`${t.gallery.view}: ${img.alt}`}
+              className="relative shrink-0 w-[84%] rounded-2xl overflow-hidden border border-[#e5e5e5] bg-[#e9e9e6] text-left"
+            >
+              <EduImage photo={galleryPhotos[i]} className="aspect-[4/3] w-full" fallback={galleryPhotos[i].fallback} />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent pt-10 pb-3.5 px-4 flex items-end justify-between gap-2">
+                <span className="text-white text-[13px] font-bold leading-snug">{img.caption}</span>
+                <Expand size={15} className="text-white/80 shrink-0" aria-hidden />
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center justify-center gap-1 mt-4" role="tablist" aria-label="Gallery pages">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              role="tab"
+              aria-selected={page === i}
+              aria-label={`${i + 1}`}
+              onClick={() => scrollTo(i)}
+              className="w-8 h-8 grid place-items-center"
+            >
+              <span className={cn('h-1.5 rounded-full transition-all', page === i ? 'w-6 bg-[#111]' : 'w-1.5 bg-[#dadada]')} />
+            </button>
+          ))}
+        </div>
+      </Reveal>
+
+      {/* desktop: editorial masonry */}
+      <div className="wrap hidden md:block mt-8">
+        <div className="columns-2 lg:columns-3 gap-4 [&>*]:mb-4">
+          {images.map((img, i) => (
+            <Reveal key={i} className="break-inside-avoid">
+              <button
+                onClick={() => setLightbox(i)}
+                aria-label={`${t.gallery.view}: ${img.alt}`}
+                className="zoom-hover group relative block w-full rounded-2xl overflow-hidden border border-[#e5e5e5] bg-[#e9e9e6] text-left"
+              >
+                <EduImage
+                  photo={galleryPhotos[i]}
+                  className={cn('w-full', i % 3 === 0 ? 'aspect-[4/3]' : i % 3 === 1 ? 'aspect-[3/3.4]' : 'aspect-[16/10]')}
+                  fallback={galleryPhotos[i].fallback}
+                />
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent pt-12 pb-4 px-5">
+                  <span className="text-white text-[14px] font-bold">{img.caption}</span>
+                </span>
+              </button>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+
       <Lightbox
         images={images}
         index={lightbox}

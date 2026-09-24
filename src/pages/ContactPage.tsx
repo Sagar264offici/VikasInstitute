@@ -1,29 +1,31 @@
 import ContactSection from '../components/ContactSection';
 import LocationSection from '../sections/LocationSection';
 import EnquiryForm from '../components/EnquiryForm';
-import CTA from '../components/CTA';
-import { Eyebrow } from '../components/RevealText';
+import SectionHeading from '../components/SectionHeading';
+import Reveal from '../components/Reveal';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function ContactPage() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   return (
-    <div className="bg-[#050816] pt-32">
-      <div className="text-center max-w-3xl mx-auto px-5">
-        <Eyebrow>{t.contact.eyebrow}</Eyebrow>
-        <h1 className="display-mega text-[12vw] sm:text-[60px] lg:text-[80px] mt-4 leading-[1.08]">
-          {lang === 'hi' ? t.pages.contactTitle : (<>CONTACT <span className="text-gradient-gold">US.</span></>)}
-        </h1>
-        <p className="text-white/55 mt-3">{t.pages.contactSub}</p>
+    <div className="bg-[#f7f7f5]">
+      <div className="wrap pt-10 sm:pt-14 pb-2 text-center">
+        <Reveal className="max-w-2xl mx-auto">
+          <p className="eyebrow">{t.contact.eyebrow}</p>
+          <h1 className="h-display text-[32px] sm:text-[46px] mt-3">{t.pages.contactTitle}</h1>
+          <p className="lede text-[15px] sm:text-[16px] mt-3">{t.pages.contactSub}</p>
+        </Reveal>
       </div>
       <LocationSection />
-      <div id="enquiry" className="max-w-4xl mx-auto px-5 sm:px-8 pb-16 scroll-mt-28">
-        <EnquiryForm />
-      </div>
+      <section id="enquiry" aria-label="Enquiry" className="section !pt-0 scroll-mt-20">
+        <div className="wrap max-w-3xl">
+          <SectionHeading eyebrow={t.enquiry.eyebrow} title={t.enquiry.title} sub={t.enquiry.sub} align="center" />
+          <Reveal className="mt-7">
+            <EnquiryForm />
+          </Reveal>
+        </div>
+      </section>
       <ContactSection />
-      <div className="pt-14">
-        <CTA />
-      </div>
     </div>
   );
 }

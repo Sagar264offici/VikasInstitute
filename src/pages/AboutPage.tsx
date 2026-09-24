@@ -1,23 +1,26 @@
-import Manifesto from '../sections/Manifesto';
+import AboutSection from '../sections/AboutSection';
+import PracticalLearning from '../sections/PracticalLearning';
 import WhyVikas from '../sections/WhyVikas';
-import FacultySection from '../sections/FacultySection';
-import LabSection from '../sections/LabSection';
+import RecognitionSection from '../sections/RecognitionSection';
 import CTA from '../components/CTA';
+import Reveal from '../components/Reveal';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function AboutPage() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   return (
-    <div className="bg-[#050816] pt-32">
-      <div className="text-center max-w-3xl mx-auto px-5">
-        <p className="font-mono text-[11px] tracking-[0.35em] text-[#5b9bff] font-bold">{t.about.eyebrow.toUpperCase()}</p>
-        <h1 className="display-mega text-[12vw] sm:text-[60px] lg:text-[80px] mt-4 leading-[1.08]">{lang === 'hi' ? t.pages.aboutTitle : t.pages.aboutTitle.toUpperCase()}</h1>
-        <p className="text-white/55 mt-3">{t.pages.aboutSub}</p>
+    <div className="bg-[#f7f7f5]">
+      <div className="wrap pt-10 sm:pt-14 pb-2 text-center">
+        <Reveal className="max-w-2xl mx-auto">
+          <p className="eyebrow">{t.about.eyebrow}</p>
+          <h1 className="h-display text-[32px] sm:text-[46px] mt-3">{t.pages.aboutTitle}</h1>
+          <p className="lede text-[15px] sm:text-[16px] mt-3">{t.pages.aboutSub}</p>
+        </Reveal>
       </div>
-      <Manifesto />
-      <LabSection />
+      <AboutSection />
+      <PracticalLearning />
       <WhyVikas />
-      <FacultySection />
+      <RecognitionSection />
       <CTA />
     </div>
   );

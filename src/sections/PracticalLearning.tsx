@@ -1,70 +1,45 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { Check, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { Eyebrow, RevealText } from '../components/RevealText';
-import ParallaxImage from '../components/ParallaxImage';
-
-const floats = ['PRACTICE', 'BUILD', 'TEST', 'IMPROVE'];
+import { photos } from '../data/images';
+import EduImage from '../components/EduImage';
+import Reveal from '../components/Reveal';
 
 export default function PracticalLearning() {
   const { t } = useLanguage();
   return (
-    <section aria-label="Practical training" className="relative bg-[#050816] py-24 sm:py-32 overflow-hidden">
-      <div className="relative z-[2] max-w-7xl mx-auto px-5 sm:px-8 grid lg:grid-cols-2 gap-12 items-center">
-        <div>
-          <Eyebrow>{t.lab.eyebrow}</Eyebrow>
-          <h2 className="display-mega text-[20vw] sm:text-[88px] lg:text-[120px] mt-4">
-            <RevealText>LEARN</RevealText>
-            <RevealText delay={0.06}>
-              BY <span className="text-gradient-gold">DOING.</span>
-            </RevealText>
+    <section aria-label="Practical training" className="section">
+      <div className="wrap grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <Reveal className="order-1">
+          <p className="eyebrow">{t.lab.eyebrow}</p>
+          <h2 className="h-display text-[38px] sm:text-[54px] lg:text-[64px] mt-3">
+            Learn
+            <br />
+            by doing.
           </h2>
-          <p className="text-white/60 mt-6 max-w-md text-[15px] sm:text-[17px] leading-relaxed">{t.lab.desc}</p>
-          <ul className="mt-7 space-y-3">
-            {t.lab.points.map((p, i) => (
-              <motion.li
-                key={p}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-3 text-[14.5px] font-semibold text-white/80"
-              >
-                <span className="w-7 h-7 grid place-items-center rounded-full bg-[#00c853]/15 border border-[#00c853]/40 text-[#4ade80] text-[13px] font-extrabold shrink-0">✓</span>
-                {p}
-              </motion.li>
-            ))}
-          </ul>
-          <Link to="/courses" className="btn-tactile inline-flex items-center gap-2 mt-8 font-extrabold text-[14px] text-white bg-white/8 border border-white/15 px-7 py-3.5 rounded-full hover:bg-white/15 tracking-wide">
-            {t.lab.cta.toUpperCase()} <ArrowRight size={16} />
+          <p className="lede text-[15px] sm:text-[16px] mt-4 max-w-md">{t.lab.desc}</p>
+          <Link to="/courses" className="btn btn-dark mt-6">
+            {t.lab.cta} <ArrowRight size={17} />
           </Link>
-        </div>
-
-        <div className="relative">
-          <motion.div
-            initial={{ clipPath: 'inset(12% 8% 12% 8% round 32px)' }}
-            whileInView={{ clipPath: 'inset(0% 0% 0% 0% round 32px)' }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="relative rounded-[32px] overflow-hidden border border-white/15"
-            data-cursor="VIEW"
-          >
-            <ParallaxImage src="/gallery/poster-2.jpg" alt="Faculty guiding a student" className="aspect-[4/5] sm:aspect-[4/4.4]" speed={0.1} />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#050816]/80 via-transparent to-transparent" />
-          </motion.div>
-          {floats.map((f, i) => (
-            <motion.span
-              key={f}
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4 + i, repeat: Infinity, delay: i * 0.5 }}
-              className={`absolute glass-pill rounded-full px-5 py-2.5 text-[11px] font-extrabold tracking-[0.2em] ${
-                i === 0 ? '-left-2 top-8' : i === 1 ? '-right-2 top-1/3' : i === 2 ? '-left-3 bottom-1/4' : '-right-1 bottom-10'
-              } ${i === 1 ? 'text-[#ffab2e]' : 'text-white'}`}
-            >
-              {f}
-            </motion.span>
-          ))}
+        </Reveal>
+        <div className="order-2">
+          <Reveal>
+            <div className="img-frame rounded-2xl">
+              <EduImage photo={photos.practical} className="aspect-[4/3]" />
+            </div>
+          </Reveal>
+          <Reveal>
+            <ul className="mt-5 divide-y divide-[#e5e5e5] border-y border-[#e5e5e5]">
+              {t.lab.points.map((p) => (
+                <li key={p} className="flex items-center gap-3 py-3 text-[14.5px] font-semibold text-[#333]">
+                  <span className="w-5 h-5 grid place-items-center rounded-full bg-[#eef4ec] text-[#2e7d32] shrink-0" aria-hidden>
+                    <Check size={13} strokeWidth={3} />
+                  </span>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </div>
       </div>
     </section>

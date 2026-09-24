@@ -1,13 +1,16 @@
 import { useLanguage } from '../context/LanguageContext';
 import { cn } from '../lib/utils';
 
-export default function LanguageSwitcher() {
+export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
   const { lang, setLang } = useLanguage();
   return (
     <div
       role="group"
       aria-label="Language / भाषा"
-      className="inline-flex items-center p-1 rounded-full border border-white/15 bg-white/5 text-[12px] font-bold backdrop-blur"
+      className={cn(
+        'inline-flex items-center rounded-full border p-0.5 text-[13px] font-bold',
+        dark ? 'border-white/25' : 'border-[#dadada]'
+      )}
     >
       {(['en', 'hi'] as const).map((l) => (
         <button
@@ -15,10 +18,12 @@ export default function LanguageSwitcher() {
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
           className={cn(
-            'px-3.5 py-1.5 rounded-full transition-all duration-300 min-w-[52px]',
+            'min-h-[36px] px-3 rounded-full transition-colors',
             lang === l
-              ? 'bg-gradient-to-r from-[#2f7bff] to-[#00a8ff] text-white shadow-lg shadow-blue-600/40'
-              : 'text-white/55 hover:text-white'
+              ? 'bg-[#111] text-white'
+              : dark
+                ? 'text-white/60 hover:text-white'
+                : 'text-[#666] hover:text-[#111]'
           )}
         >
           {l === 'en' ? 'EN' : 'हिंदी'}

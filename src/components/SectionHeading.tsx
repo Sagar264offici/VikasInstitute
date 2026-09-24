@@ -6,27 +6,18 @@ export default function SectionHeading({
   eyebrow,
   title,
   sub,
-  align = 'center',
-  children,
+  align = 'left',
 }: {
   eyebrow: string;
   title: ReactNode;
   sub?: string;
-  dark?: boolean;
-  align?: 'center' | 'left';
-  children?: ReactNode;
+  align?: 'left' | 'center';
 }) {
   return (
-    <Reveal className={cn('max-w-3xl', align === 'center' ? 'mx-auto text-center' : 'text-left')}>
-      <span className="inline-flex items-center gap-2.5 text-[11px] font-extrabold tracking-[0.3em] uppercase text-[#5b9bff]">
-        <span className="w-8 h-[2px] bg-gradient-to-r from-[#2f7bff] to-[#ff7a00] rounded-full" aria-hidden />
-        {eyebrow}
-      </span>
-      <h2 className="font-display font-extrabold tracking-tight text-[30px] leading-[1.05] sm:text-[44px] mt-4 text-white">
-        {title}
-      </h2>
-      {sub && <p className="mt-4 text-[15px] sm:text-[16.5px] leading-relaxed text-white/55">{sub}</p>}
-      {children}
+    <Reveal className={cn('max-w-2xl', align === 'center' && 'mx-auto text-center')}>
+      <p className="eyebrow">{eyebrow}</p>
+      <h2 className="h-section text-[28px] sm:text-[36px] mt-3">{title}</h2>
+      {sub && <p className="lede text-[15px] sm:text-[16px] mt-3">{sub}</p>}
     </Reveal>
   );
 }
