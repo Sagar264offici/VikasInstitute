@@ -8,19 +8,28 @@ interface FieldConfig {
   nodeOpacity: number;
   lineOpacity: number;
   ringOpacity: number;
+  ringScale: number;
   frameInterval: number;
 }
 
-function makeConfig(aspect: number): FieldConfig {
+interface NeuralFieldProps {
+  className?: string;
+  variant?: 'hero' | 'footer';
+  tone?: 'light' | 'dark';
+}
+
+function makeConfig(variant: 'hero' | 'footer', aspect: number): FieldConfig {
   const coarse = window.matchMedia('(pointer: coarse)').matches;
   const compact = aspect < 0.9;
+  const footer = variant === 'footer';
   return {
-    nodes: compact ? 40 : 110,
-    edges: compact ? 54 : 150,
-    pointSize: compact ? 2.2 : 2.6,
-    nodeOpacity: compact ? 0.4 : 0.5,
-    lineOpacity: compact ? 0.2 : 0.26,
-    ringOpacity: compact ? 0.14 : 0.2,
+    nodes: compact ? (footer ? 44 : 52) : footer ? 84 : 140,
+    edges: compact ? (footer ? 60 : 72) : footer ? 116 : 190,
+    pointSize: compact ? (footer ? 2.2 : 2.7) : footer ? 2.6 : 3.2,
+    nodeOpacity: compact ? (footer ? 0.5 : 0.78) : footer ? 0.6 : 0.9,
+    lineOpacity: compact ? (footer ? 0.22 : 0.34) : footer ? 0.3 : 0.42,
+    ringOpacity: compact ? (footer ? 0.16 : 0.26) : footer ? 0.22 : 0.32,
+    ringScale: footer ? 0.78 : 1,
     frameInterval: coarse ? 1000 / 30 : 1000 / 60,
   };
 }
@@ -34,7 +43,7 @@ function ringPoints(radius: number, segments: number): THREE.Vector3[] {
   return pts;
 }
 
-export default function NeuralField({ className = '' }: { className?: string }) {
+export default function NeuralField({ className = '', variant = 'hero', tone = 'light' }: NeuralFieldProps) {
   const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -86,12 +95,13 @@ export default function NeuralField({ className = '' }: { className?: string }) 
     dotCtx.fillRect(0, 0, 64, 64);
     const dotTexture = new THREE.CanvasTexture(dotCanvas);
 
-    const INK = new THREE.Color('#17324d');
     const GOLD = new THREE.Color('#e8b64c');
+    const nodeColor = tone === 'dark' ? new THREE.Color('#f2f0e9') : new THREE.Color('#17324d');
+    const ringInnerColor = tone === 'dark' ? new THREE.Color('#e6e4dc') : new THREE.Color('#17324d');
     const group = new THREE.Group();
     scene.add(group);
 
-    let config = makeConfig(1);
+    let config = makeConfig(variant, 1);
     const state = { base: null as Float32Array | null, pos: null as Float32Array | null, seeds: null as Float32Array | null, edges: [] as Array<{ u: number; v: number }>, pGeo: null as THREE.BufferGeometry | null, linePos: null as Float32Array | null, lGeo: null as THREE.BufferGeometry | null, outerRing: null as THREE.LineLoop | null, innerRing: null as THREE.LineLoop | null };
 
     function buildGeometry() {
@@ -100,17 +110,21 @@ export default function NeuralField({ className = '' }: { className?: string }) 
       const sz = 2.6;
 
       const base = new Float32Array(config.nodes * 3);
-      const seeds = new Float32Array(config.nodes * 6);
+      const seeds = new Float32Array(config.nodes * 9);
       for (let i = 0; i < config.nodes; i++) {
         base[i * 3] = (Math.random() - 0.5) * 2 * sx;
         base[i * 3 + 1] = (Math.random() - 0.5) * 2 * sy;
         base[i * 3 + 2] = (Math.random() - 0.5) * 2 * sz;
-        seeds[i * 6] = 0.25 + Math.random() * 0.5;
-        seeds[i * 6 + 1] = Math.random() * Math.PI * 2;
-        seeds[i * 6 + 2] = 0.25 + Math.random() * 0.5;
-        seeds[i * 6 + 3] = Math.random() * Math.PI * 2;
-        seeds[i * 6 + 4] = 0.25 + Math.random() * 0.5;
-        seeds[i * 6 + 5] = Math.random() * Math.PI * 2;
+        const s = i * 9;
+        seeds[s] = 0.25 + Math.random() * 0.5;
+        seeds[s + 1] = Math.random() * Math.PI * 2;
+        seeds[s + 2] = 0.25 + Math.random() * 0.5;
+        seeds[s + 3] = Math.random() * Math.PI * 2;
+        seeds[s + 4] = 0.25 + Math.random() * 0.5;
+        seeds[s + 5] = Math.random() * Math.PI * 2;
+        seeds[s + 6] = 3 + Math.random() * 5;
+        seeds[s + 7] = Math.random() * Math.PI * 2;
+        seeds[s + 8] = (variant === 'footer' ? 0.06 : 0.12) + Math.random() * 0.1;
       }
 
       const candidates: Array<{ u: number; v: number; d: number }> = [];
@@ -129,7 +143,7 @@ export default function NeuralField({ className = '' }: { className?: string }) 
 
       const colors = new Float32Array(config.nodes * 3);
       for (let i = 0; i < config.nodes; i++) {
-        const c = Math.random() < 0.28 ? GOLD : INK;
+        const c = Math.random() < 0.3 ? GOLD : nodeColor;
         colors[i * 3] = c.r;
         colors[i * 3 + 1] = c.g;
         colors[i * 3 + 2] = c.b;
@@ -163,15 +177,17 @@ export default function NeuralField({ className = '' }: { className?: string }) 
         blending: THREE.NormalBlending,
       });
 
+      const outerRadius = 4.1 * config.ringScale;
+      const innerRadius = 2.45 * config.ringScale;
       const outerRing = new THREE.LineLoop(
-        new THREE.BufferGeometry().setFromPoints(ringPoints(4.1, 64)),
+        new THREE.BufferGeometry().setFromPoints(ringPoints(outerRadius, 64)),
         new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: config.ringOpacity, depthWrite: false })
       );
       outerRing.rotation.set(1.15, 0.1, 0);
 
       const innerRing = new THREE.LineLoop(
-        new THREE.BufferGeometry().setFromPoints(ringPoints(2.45, 48)),
-        new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: config.ringOpacity * 1.2, depthWrite: false })
+        new THREE.BufferGeometry().setFromPoints(ringPoints(innerRadius, 48)),
+        new THREE.LineBasicMaterial({ color: ringInnerColor, transparent: true, opacity: config.ringOpacity * 1.2, depthWrite: false })
       );
       innerRing.rotation.set(1.4, 0.2, 0);
 
@@ -196,7 +212,7 @@ export default function NeuralField({ className = '' }: { className?: string }) 
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      const next = makeConfig(w / h);
+      const next = makeConfig(variant, w / h);
       if (next.nodes !== config.nodes) {
         config = next;
         group.clear();
@@ -207,7 +223,8 @@ export default function NeuralField({ className = '' }: { className?: string }) 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(host);
 
-    const pointer = { tx: 0, ty: 0, x: 0, y: 0, active: finePointer && !reduced };
+    const interactive = variant === 'hero' && finePointer && !reduced;
+    const pointer = { tx: 0, ty: 0, x: 0, y: 0, active: interactive };
 
     function onPointerMove(e: PointerEvent) {
       const r = host.getBoundingClientRect();
@@ -241,10 +258,13 @@ export default function NeuralField({ className = '' }: { className?: string }) 
 
       for (let i = 0; i < config.nodes; i++) {
         const b = i * 3;
-        const s = i * 6;
-        pos[b] = base[b] + Math.sin(t * seeds[s] + seeds[s + 1]) * 0.55;
-        pos[b + 1] = base[b + 1] + Math.cos(t * seeds[s + 2] + seeds[s + 3]) * 0.45;
-        pos[b + 2] = base[b + 2] + Math.sin(t * seeds[s + 4] + seeds[s + 5]) * 0.3;
+        const s = i * 9;
+        const jf = seeds[s + 6];
+        const jp = seeds[s + 7];
+        const ja = seeds[s + 8];
+        pos[b] = base[b] + Math.sin(t * seeds[s] + seeds[s + 1]) * 0.55 + Math.sin(t * jf + jp) * ja;
+        pos[b + 1] = base[b + 1] + Math.cos(t * seeds[s + 2] + seeds[s + 3]) * 0.45 + Math.sin(t * jf + jp + 2.1) * ja;
+        pos[b + 2] = base[b + 2] + Math.sin(t * seeds[s + 4] + seeds[s + 5]) * 0.3 + Math.sin(t * jf + jp + 4.2) * ja;
       }
       pGeo.attributes.position.needsUpdate = true;
 
@@ -325,7 +345,7 @@ export default function NeuralField({ className = '' }: { className?: string }) 
       renderer.dispose();
       if (canvas.parentElement === host) host.removeChild(canvas);
     };
-  }, []);
+  }, [variant, tone]);
 
   return <div ref={hostRef} className={className} aria-hidden="true" />;
 }

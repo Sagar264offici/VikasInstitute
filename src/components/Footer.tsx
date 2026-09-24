@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -6,11 +7,16 @@ import { courses } from '../data/courses';
 import Logo from './Logo';
 import LanguageSwitcher from './LanguageSwitcher';
 
+const NeuralField = lazy(() => import('./NeuralField'));
+
 export default function Footer() {
   const { t, lang } = useLanguage();
   return (
-    <footer className="bg-[#111] text-white">
-      <div className="wrap pt-12 pb-8">
+    <footer className="relative overflow-hidden bg-[#111] text-white">
+      <Suspense fallback={null}>
+        <NeuralField variant="footer" tone="dark" className="absolute inset-0 pointer-events-none" />
+      </Suspense>
+      <div className="wrap relative pt-12 pb-8">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.7fr_0.9fr_1fr]">
           <div>
             <Logo tone="light" />
