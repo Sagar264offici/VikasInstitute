@@ -1,15 +1,9 @@
 /**
- * Recognition / certifications awarded to the institute.
+ * Recognition / certifications of the institute.
  *
- * NOTE: The shared Canva link requires sign-in, so its contents could
- * not be read automatically. Please share the certificate titles
- * (and images, if any) and they will be listed here.
- *
- * To add an entry:
- *   { titleEn, titleHi, issuerEn, issuerHi, year }
- * Place certificate images in `public/gallery/` and set `image`.
- * The Recognition section stays hidden while this list is empty —
- * nothing unverified is ever published.
+ * Displayed in the Recognition section on the home and about pages.
+ * Badge artwork lives in `public/recognition/` — replace any file
+ * with the official artwork (same filename) to upgrade fidelity.
  */
 
 export interface Recognition {
@@ -21,4 +15,33 @@ export interface Recognition {
   image?: string;
 }
 
-export const recognitions: Recognition[] = [];
+export const recognitions: Recognition[] = [
+  {
+    titleEn: 'ISO Certified Company',
+    titleHi: 'ISO प्रमाणित कंपनी',
+    issuerEn: 'International quality certification',
+    issuerHi: 'अंतरराष्ट्रीय गुणवत्ता प्रमाणन',
+    image: '/recognition/iso-certified.svg',
+  },
+  {
+    titleEn: 'Startup India',
+    titleHi: 'स्टार्टअप इंडिया',
+    issuerEn: 'Government of India initiative',
+    issuerHi: 'भारत सरकार की पहल',
+    image: '/recognition/startup-india.svg',
+  },
+  {
+    titleEn: 'NITI Aayog',
+    titleHi: 'नीति आयोग',
+    issuerEn: 'Government of India',
+    issuerHi: 'भारत सरकार',
+    image: '/recognition/niti-aayog.svg',
+  },
+  {
+    titleEn: 'CSC — Digital India',
+    titleHi: 'CSC — डिजिटल इंडिया',
+    issuerEn: 'Common Services Centers · Power to Empower',
+    issuerHi: 'कॉमन सर्विस सेंटर · Power to Empower',
+    image: '/recognition/csc-digital-india.svg',
+  },
+];
