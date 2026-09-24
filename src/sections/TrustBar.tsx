@@ -2,20 +2,18 @@ import { useLanguage } from '../context/LanguageContext';
 
 export default function TrustBar() {
   const { t } = useLanguage();
+  const items = [...t.trust.items, ...t.trust.items];
   return (
-    <div className="bg-white border-b border-slate-200 overflow-hidden" aria-label="Highlights">
-      <div className="flex whitespace-nowrap animate-marquee py-3.5 gap-0 w-max">
-        {[0, 1].map((dup) => (
-          <div key={dup} className="flex items-center" aria-hidden={dup === 1}>
-            {[t.trust.line1, t.trust.line2, ...t.trust.items, t.hero.tagline].map((s, i) => (
-              <span key={i} className="flex items-center text-[13.5px] font-bold text-[#0a1a5c]">
-                <span className="px-5">{s}</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff8a1e]" />
-              </span>
-            ))}
-          </div>
+    <div aria-label="Highlights" className="relative bg-[#04061a] border-y border-white/10 py-5 overflow-hidden">
+      <div className="flex items-center gap-8 whitespace-nowrap animate-marquee w-max">
+        {items.map((item, i) => (
+          <span key={i} className="flex items-center gap-8 text-[13px] font-extrabold tracking-[0.25em] text-white/60">
+            {item.toUpperCase()}
+            <span className="w-2 h-2 rounded-full bg-[#ff7a00]" aria-hidden />
+          </span>
         ))}
       </div>
+      <p className="sr-only">{t.trust.line1} — {t.trust.line2}</p>
     </div>
   );
 }

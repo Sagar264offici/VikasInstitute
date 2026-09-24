@@ -1,27 +1,24 @@
-import AboutSection from '../sections/AboutSection';
-import WhyChooseUs from '../sections/WhyChooseUs';
+import Manifesto from '../sections/Manifesto';
+import WhyVikas from '../sections/WhyVikas';
 import FacultySection from '../sections/FacultySection';
+import LabSection from '../sections/LabSection';
 import CTA from '../components/CTA';
-import Reveal from '../components/Reveal';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function AboutPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   return (
-    <div className="pt-12">
-      <Reveal className="text-center max-w-3xl mx-auto px-4">
-        <span className="inline-block text-[12px] font-bold tracking-[0.18em] uppercase px-4 py-1.5 rounded-full border border-[#2f7bff]/20 bg-[#2f7bff]/8 text-[#1a33a3]">
-          {t.about.eyebrow}
-        </span>
-        <h1 className="font-display font-extrabold text-[30px] sm:text-[46px] text-[#0a1a5c] tracking-tight mt-4">{t.pages.aboutTitle}</h1>
-        <p className="text-slate-600 mt-3">{t.pages.aboutSub}</p>
-      </Reveal>
-      <AboutSection />
-      <WhyChooseUs />
-      <FacultySection />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <CTA />
+    <div className="bg-[#050816] pt-32">
+      <div className="text-center max-w-3xl mx-auto px-5">
+        <p className="font-mono text-[11px] tracking-[0.35em] text-[#5b9bff] font-bold">{t.about.eyebrow.toUpperCase()}</p>
+        <h1 className="display-mega text-[12vw] sm:text-[60px] lg:text-[80px] mt-4 leading-[1.08]">{lang === 'hi' ? t.pages.aboutTitle : t.pages.aboutTitle.toUpperCase()}</h1>
+        <p className="text-white/55 mt-3">{t.pages.aboutSub}</p>
       </div>
+      <Manifesto />
+      <LabSection />
+      <WhyVikas />
+      <FacultySection />
+      <CTA />
     </div>
   );
 }

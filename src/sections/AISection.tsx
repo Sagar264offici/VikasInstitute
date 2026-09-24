@@ -1,74 +1,76 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { BrainCircuit, CheckCircle2, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { BrainCircuit, Zap, ShieldCheck, PenTool } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import SectionHeading from '../components/SectionHeading';
-import Reveal from '../components/Reveal';
+import { Eyebrow, RevealText } from '../components/RevealText';
+
+const icons = [Zap, PenTool, ShieldCheck];
 
 export default function AISection() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const yOrb = useTransform(scrollYProgress, [0, 1], [60, -60]);
+
   return (
-    <section aria-label="AI learning" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
-      <div className="relative overflow-hidden rounded-[30px] bg-gradient-to-br from-[#0a1a5c] via-[#3b2a8f] to-[#0a1a5c] text-white px-6 py-12 sm:p-14">
-        <div className="absolute inset-0 bg-blueprint" aria-hidden />
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-          className="absolute -right-24 -top-24 w-[340px] h-[340px] rounded-full border border-white/15"
-          aria-hidden
-        >
-          <span className="absolute top-4 left-1/2 w-3 h-3 rounded-full bg-[#ffd166]" />
-          <span className="absolute bottom-8 left-8 w-2 h-2 rounded-full bg-[#5b9bff]" />
+    <section ref={ref} aria-label="AI learning" className="relative bg-[#070b1a] py-24 sm:py-36 overflow-hidden noise scanlines">
+      <div className="absolute inset-0 bg-blueprint opacity-70" aria-hidden />
+      <motion.div style={{ y: yOrb }} className="orb w-[620px] h-[620px] bg-[#1a33a3]/45 top-[-100px] left-1/2 -translate-x-1/2" aria-hidden />
+      {/* neural rings */}
+      <div className="absolute right-[-140px] top-1/2 -translate-y-1/2 w-[480px] h-[480px] hidden md:block" aria-hidden>
+        <motion.div style={{ rotate }} className="absolute inset-0">
+          <span className="absolute inset-0 rounded-full border border-[#00a8ff]/25" />
+          <span className="absolute inset-8 rounded-full border border-dashed border-[#2f7bff]/30" />
+          <span className="absolute inset-20 rounded-full border border-[#ff7a00]/25" />
+          {['AI', 'ML', 'DATA'].map((w, i) => (
+            <span key={w} className="absolute w-14 h-14 grid place-items-center rounded-full glass-pill text-[11px] font-extrabold tracking-widest" style={{ top: `${12 + i * 30}%`, left: `${8 + i * 32}%` }}>
+              {w}
+            </span>
+          ))}
         </motion.div>
-        <div className="absolute left-1/2 top-0 w-[420px] h-[220px] bg-[#7d5bff]/30 blur-[100px] rounded-full" aria-hidden />
+        <span className="absolute inset-0 m-auto w-28 h-28 grid place-items-center rounded-full bg-gradient-to-br from-[#2f7bff] to-[#00a8ff] shadow-[0_0_80px_rgba(0,168,255,0.5)]">
+          <BrainCircuit size={40} className="text-white" />
+        </span>
+      </div>
 
-        <div className="relative grid lg:grid-cols-[1fr_0.9fr] gap-10 items-center">
-          <div>
-            <SectionHeading dark eyebrow={t.ai.eyebrow} title={t.ai.title} sub={t.ai.sub} align="left" />
-            <Reveal delay={0.1}>
-              <ul className="mt-6 space-y-3">
-                {t.ai.points.map((p) => (
-                  <li key={p} className="flex items-start gap-3 text-[14.5px] text-white/85 bg-white/8 border border-white/12 rounded-2xl px-4 py-3.5">
-                    <CheckCircle2 size={18} className="text-[#7dffa8] shrink-0 mt-0.5" /> {p}
-                  </li>
-                ))}
-              </ul>
-              <Link to="/courses" className="btn-tactile inline-flex items-center gap-2 mt-6 font-bold text-[#0a1a5c] bg-white px-6 py-3.5 rounded-full">
-                {t.ai.cta} <ArrowRight size={16} />
-              </Link>
-            </Reveal>
-          </div>
+      <div className="relative z-[2] max-w-7xl mx-auto px-5 sm:px-8">
+        <Eyebrow>{t.ai.eyebrow}</Eyebrow>
+        <h2 className="display-mega text-[13.5vw] sm:text-[76px] lg:text-[110px] mt-4 max-w-5xl">
+          <RevealText>DON&rsquo;T JUST FOLLOW</RevealText>
+          <RevealText delay={0.06}>THE FUTURE.</RevealText>
+          <RevealText delay={0.12}>
+            <span className="text-gradient-neon">CREATE IT.</span>
+          </RevealText>
+        </h2>
+        <p className="text-white/60 max-w-xl mt-6 text-[15px] sm:text-[17px] leading-relaxed">{t.ai.sub}</p>
 
-          <Reveal delay={0.15}>
-            <div className="mx-auto max-w-[380px] text-center">
+        <div className="grid sm:grid-cols-3 gap-4 mt-10 max-w-4xl">
+          {t.ai.points.map((p, i) => {
+            const Icon = icons[i % icons.length];
+            return (
               <motion.div
-                animate={{ y: [0, -12, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative mx-auto w-52 h-52 sm:w-64 sm:h-64"
+                key={p}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                className="rounded-3xl border border-white/12 bg-white/[0.04] backdrop-blur p-6 hover:border-[#00a8ff]/40 transition group"
               >
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#2f7bff] via-[#7d5bff] to-[#ff8a1e] opacity-90 blur-[2px]" />
-                <div className="absolute inset-[10px] rounded-full bg-[#0a1a5c] grid place-items-center border border-white/20">
-                  <BrainCircuit size={72} className="text-[#9fc0ff]" />
-                </div>
-                {['AI', 'ML', 'DATA'].map((w, i) => (
-                  <motion.span
-                    key={w}
-                    animate={{ y: [0, -8, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, delay: i * 0.7 }}
-                    className="absolute text-[11px] font-extrabold tracking-widest bg-white text-[#0a1a5c] px-3 py-1.5 rounded-full shadow-xl"
-                    style={{
-                      top: i === 0 ? '6%' : i === 1 ? '46%' : '84%',
-                      left: i === 0 ? '-8%' : i === 1 ? '88%' : '4%',
-                    }}
-                  >
-                    {w}
-                  </motion.span>
-                ))}
+                <span className="w-11 h-11 grid place-items-center rounded-2xl bg-gradient-to-br from-[#2f7bff]/30 to-[#00a8ff]/10 border border-[#00a8ff]/30 text-[#7db4ff] group-hover:scale-110 transition">
+                  <Icon size={20} />
+                </span>
+                <p className="font-bold text-[14.5px] mt-4 leading-relaxed text-white/85">{p}</p>
               </motion.div>
-              <p className="mt-6 text-white/55 text-[13px] font-medium tracking-wide">Practical • Responsible • Career-relevant</p>
-            </div>
-          </Reveal>
+            );
+          })}
         </div>
+
+        <p className="font-mono text-[11px] tracking-[0.3em] text-white/30 mt-8">{lang === 'hi' ? 'व्यावहारिक • जिम्मेदार • करियर के लिए उपयोगी' : 'PRACTICAL • RESPONSIBLE • CAREER-RELEVANT'}</p>
+        <Link to="/courses" className="btn-tactile btn-glow-blue inline-flex mt-4 font-extrabold text-[14px] text-white bg-gradient-to-r from-[#2456e6] to-[#00a8ff] px-8 py-4 rounded-full tracking-wide">
+          {t.ai.cta.toUpperCase()} →
+        </Link>
       </div>
     </section>
   );

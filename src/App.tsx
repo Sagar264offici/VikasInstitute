@@ -1,18 +1,21 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { LanguageProvider } from './context/LanguageContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { useLenis } from './hooks/useLenis';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ScrollProgress';
 import ScrollToTop from './components/ScrollToTop';
+import Preloader from './components/Preloader';
+import CustomCursor from './components/CustomCursor';
 import HomePage from './pages/HomePage';
 import CoursesPage from './pages/CoursesPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import CourseDetailPage from './pages/CourseDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { useEffect } from 'react';
 
 function ScrollManager() {
   const { pathname, hash } = useLocation();
@@ -54,11 +57,15 @@ function AnimatedRoutes() {
 
 function Shell() {
   useLenis(true);
+  const [loaded, setLoaded] = useState(false);
+  const { lang } = useLanguage();
   return (
-    <div className="min-h-screen flex flex-col">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-full focus:m-2">
-        Skip to content
+    <div className="min-h-screen flex flex-col bg-[#050816] text-[#eef2ff]">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:text-black focus:px-4 focus:py-2 focus:rounded-full focus:m-2">
+        {lang === 'hi' ? 'सामग्री पर जाएँ' : 'Skip to content'}
       </a>
+      {!loaded && <Preloader onDone={() => setLoaded(true)} />}
+      <CustomCursor />
       <ScrollProgress />
       <ScrollManager />
       <Navbar />

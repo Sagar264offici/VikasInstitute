@@ -60,13 +60,13 @@ export default function Lightbox({
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
-            className="max-w-3xl w-full bg-white rounded-3xl overflow-hidden"
+            className="max-w-3xl w-full bg-[#0a1024] border border-white/15 rounded-3xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="aspect-[16/10] overflow-hidden bg-slate-100">
+            <div className="aspect-[16/10] overflow-hidden bg-[#050816]">
               <img src={images[index].src} alt={images[index].alt} className="w-full h-full object-cover" />
             </div>
-            <figcaption className="px-6 py-4 text-[14.5px] font-semibold text-[#0a1a5c]">{images[index].caption}</figcaption>
+            <figcaption className="px-6 py-4 text-[14.5px] font-semibold text-white">{images[index].caption}</figcaption>
           </motion.figure>
           <button
             onClick={(e) => { e.stopPropagation(); onNavigate((index + 1) % images.length); }}

@@ -1,26 +1,32 @@
 import { Link } from 'react-router-dom';
-import { MessageSquareHeart, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
-import SectionHeading from '../components/SectionHeading';
-import Reveal from '../components/Reveal';
+import { Eyebrow } from '../components/RevealText';
 
 export default function TestimonialPlaceholder() {
   const { t } = useLanguage();
   return (
-    <section aria-label="Student experience" className="max-w-7xl mx-auto px-4 sm:px-6 pb-4">
-      <SectionHeading eyebrow={t.testimonials.eyebrow} title={t.testimonials.title} sub={t.testimonials.sub} />
-      <Reveal delay={0.1}>
-        <div className="max-w-2xl mx-auto mt-8 border-2 border-dashed border-[#2f7bff]/30 bg-[#f4f7ff] rounded-[24px] p-8 sm:p-10 text-center">
-          <span className="mx-auto w-14 h-14 grid place-items-center rounded-2xl bg-white shadow border border-slate-200 text-[#1a33a3]">
-            <MessageSquareHeart size={26} />
-          </span>
-          <h3 className="font-display font-extrabold text-[19px] text-[#0a1a5c] mt-4">{t.testimonials.cardTitle}</h3>
-          <p className="text-slate-600 text-[14.5px] mt-2 leading-relaxed">{t.testimonials.cardDesc}</p>
-          <Link to="/contact" className="btn-tactile inline-flex items-center gap-2 mt-5 font-bold text-white bg-[#0a1a5c] px-6 py-3.5 rounded-full">
-            {t.testimonials.cta} <ArrowRight size={16} />
+    <section aria-label="Student experience" className="relative bg-[#050816] py-20 sm:py-28 overflow-hidden">
+      <div className="max-w-5xl mx-auto px-5 sm:px-8 text-center relative z-[2]">
+        <div className="flex justify-center"><Eyebrow>{t.testimonials.eyebrow}</Eyebrow></div>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mt-6 rounded-[32px] border border-dashed border-white/20 bg-white/[0.02] p-10 sm:p-14"
+        >
+          <p className="font-display font-extrabold text-[28px] sm:text-[44px] leading-tight text-white/85">
+            &ldquo;{t.testimonials.title}&rdquo;
+          </p>
+          <p className="text-white/45 text-[14.5px] mt-4 max-w-xl mx-auto leading-relaxed">{t.testimonials.sub}</p>
+          <p className="font-mono text-[11px] tracking-[0.3em] text-[#ffab2e] mt-6 font-bold">{t.testimonials.cardTitle.toUpperCase()}</p>
+          <p className="text-white/40 text-[13px] mt-2">{t.testimonials.cardDesc}</p>
+          <Link to="/contact" className="btn-tactile inline-flex mt-6 font-extrabold text-[13px] tracking-widest text-white border border-white/20 bg-white/5 px-7 py-3.5 rounded-full hover:bg-white/10">
+            {t.testimonials.cta.toUpperCase()} →
           </Link>
-        </div>
-      </Reveal>
+        </motion.div>
+      </div>
     </section>
   );
 }

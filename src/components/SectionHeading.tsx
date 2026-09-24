@@ -6,7 +6,6 @@ export default function SectionHeading({
   eyebrow,
   title,
   sub,
-  dark = false,
   align = 'center',
   children,
 }: {
@@ -19,19 +18,14 @@ export default function SectionHeading({
 }) {
   return (
     <Reveal className={cn('max-w-3xl', align === 'center' ? 'mx-auto text-center' : 'text-left')}>
-      <span
-        className={cn(
-          'inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.18em] uppercase px-4 py-1.5 rounded-full border',
-          dark ? 'border-white/20 bg-white/10 text-[#ffd166]' : 'border-[#2f7bff]/20 bg-[#2f7bff]/8 text-[#1a33a3]'
-        )}
-      >
-        <span className="w-1.5 h-1.5 rounded-full bg-current" />
+      <span className="inline-flex items-center gap-2.5 text-[11px] font-extrabold tracking-[0.3em] uppercase text-[#5b9bff]">
+        <span className="w-8 h-[2px] bg-gradient-to-r from-[#2f7bff] to-[#ff7a00] rounded-full" aria-hidden />
         {eyebrow}
       </span>
-      <h2 className={cn('font-display font-extrabold tracking-tight text-[30px] leading-[1.1] sm:text-[42px] mt-4', dark ? 'text-white' : 'text-[#0a1a5c]')}>
+      <h2 className="font-display font-extrabold tracking-tight text-[30px] leading-[1.05] sm:text-[44px] mt-4 text-white">
         {title}
       </h2>
-      {sub && <p className={cn('mt-4 text-[15.5px] sm:text-[17px] leading-relaxed', dark ? 'text-white/70' : 'text-slate-600')}>{sub}</p>}
+      {sub && <p className="mt-4 text-[15px] sm:text-[16.5px] leading-relaxed text-white/55">{sub}</p>}
       {children}
     </Reveal>
   );

@@ -1,62 +1,69 @@
 import Hero from '../sections/Hero';
 import TrustBar from '../sections/TrustBar';
-import AboutSection from '../sections/AboutSection';
-import WhyChooseUs from '../sections/WhyChooseUs';
-import PracticalTraining from '../sections/PracticalTraining';
-import TechStack from '../sections/TechStack';
+import Manifesto from '../sections/Manifesto';
+import CourseExplorer from '../sections/CourseExplorer';
+import TechnologyWall from '../sections/TechnologyWall';
 import AISection from '../sections/AISection';
+import PracticalLearning from '../sections/PracticalLearning';
+import LabSection from '../sections/LabSection';
+import WhyVikas from '../sections/WhyVikas';
 import FacultySection from '../sections/FacultySection';
 import GallerySection from '../sections/GallerySection';
+import LocationSection from '../sections/LocationSection';
 import TestimonialPlaceholder from '../sections/TestimonialPlaceholder';
 import Faq from '../components/Faq';
 import ContactSection from '../components/ContactSection';
 import CTA from '../components/CTA';
-import CourseGrid from '../components/CourseGrid';
-import SectionHeading from '../components/SectionHeading';
-import Reveal from '../components/Reveal';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Phone } from 'lucide-react';
+import EnquiryForm from '../components/EnquiryForm';
+import { Eyebrow, RevealText } from '../components/RevealText';
 import { useLanguage } from '../context/LanguageContext';
 import { contactInfo } from '../data/contact';
+import { Phone } from 'lucide-react';
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   return (
     <>
       <Hero />
       <TrustBar />
-      <section aria-label="Courses preview" className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 sm:pt-20">
-        <SectionHeading eyebrow={t.courses.eyebrow} title={t.courses.title} sub={t.courses.sub} />
-        <div className="mt-8">
-          <CourseGrid limit={6} />
-        </div>
-        <Reveal className="text-center mt-8">
-          <Link to="/courses" className="btn-tactile inline-flex items-center gap-2 font-bold text-white bg-[#0a1a5c] px-7 py-3.5 rounded-full">
-            {t.courses.viewAll} <ArrowRight size={16} />
-          </Link>
-        </Reveal>
-      </section>
-      <AboutSection />
-      <WhyChooseUs />
-      <PracticalTraining />
-      <TechStack />
+      <Manifesto />
+      <CourseExplorer />
+      <TechnologyWall />
       <AISection />
+      <PracticalLearning />
+      <LabSection />
+      <WhyVikas />
       <FacultySection />
       <GallerySection />
+      <LocationSection />
       <TestimonialPlaceholder />
-      <section id="faq" aria-label="FAQ" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20 scroll-mt-20">
-        <SectionHeading eyebrow={t.faq.eyebrow} title={t.faq.title} sub={t.faq.sub} />
-        <div className="mt-8">
+      <section id="faq" aria-label="FAQ" className="relative bg-[#050816] py-20 sm:py-28 scroll-mt-20 overflow-hidden">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8">
           <Faq />
+          <div className="text-center mt-8">
+            <a href={contactInfo.phoneLinks[0]} className="btn-tactile inline-flex items-center gap-2 font-bold text-white border border-white/20 bg-white/5 px-7 py-4 rounded-full hover:bg-white/10">
+              <Phone size={16} /> {t.faq.cta}
+            </a>
+          </div>
         </div>
-        <Reveal className="text-center mt-7">
-          <a href={contactInfo.phoneLinks[0]} className="btn-tactile inline-flex items-center gap-2 font-bold text-[#0a1a5c] border border-slate-300 bg-white px-6 py-3.5 rounded-full hover:border-[#2f7bff]">
-            <Phone size={16} /> {t.faq.cta}
-          </a>
-        </Reveal>
+      </section>
+      <section id="enquiry" aria-label="Enquiry" className="relative bg-[#070b1a] py-20 sm:py-28 overflow-hidden scroll-mt-20">
+        <div className="orb w-[480px] h-[480px] bg-[#2f7bff]/15 top-0 left-0" aria-hidden />
+        <div className="relative z-[2] max-w-5xl mx-auto px-5 sm:px-8">
+          <div className="text-center mb-8">
+            <Eyebrow>{t.enquiry.eyebrow}</Eyebrow>
+            <h2 className="display-mega text-[12vw] sm:text-[60px] mt-4 leading-[1.05]">
+              <RevealText>{lang === 'hi' ? 'पूछताछ भेजें।' : 'SEND ENQUIRY.'}</RevealText>
+            </h2>
+            <p className="text-white/50 mt-3 max-w-xl mx-auto text-[15px]">{t.enquiry.sub}</p>
+          </div>
+          <EnquiryForm />
+        </div>
       </section>
       <ContactSection />
-      <CTA />
+      <div className="bg-[#050816] pt-14">
+        <CTA />
+      </div>
     </>
   );
 }

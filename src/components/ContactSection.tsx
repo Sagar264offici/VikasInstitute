@@ -1,80 +1,58 @@
-import { MapPin, Phone, MessageCircle, Navigation, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Phone, MessageCircle, Navigation, MailOpen } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { contactInfo } from '../data/contact';
-import SectionHeading from '../components/SectionHeading';
-import Reveal from '../components/Reveal';
-import EnquiryForm from '../components/EnquiryForm';
+import { Eyebrow, RevealText } from '../components/RevealText';
+import MagneticButton from '../components/MagneticButton';
 
-export default function ContactSection({ showForm = true }: { showForm?: boolean }) {
-  const { t, lang } = useLanguage();
+export default function ContactSection() {
+  const { t } = useLanguage();
+  const actions = [
+    { icon: Phone, label: t.contact.callNow, href: contactInfo.phoneLinks[0], primary: true },
+    { icon: MessageCircle, label: t.contact.whatsapp, href: contactInfo.whatsapp, primary: false },
+    { icon: Navigation, label: t.contact.directions, href: contactInfo.mapsUrl, primary: false },
+    { icon: MailOpen, label: t.enquiry.eyebrow, href: '/contact#enquiry', primary: false },
+  ];
   return (
-    <section id="contact" aria-label="Contact" className="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
-      <SectionHeading eyebrow={t.contact.eyebrow} title={t.contact.title} sub={t.contact.sub} />
-      <div className={`grid gap-6 mt-10 ${showForm ? 'lg:grid-cols-2' : ''}`}>
-        <Reveal>
-          <div className="flex flex-col gap-4 h-full">
-            <div className="bg-[#0a1a5c] text-white rounded-[24px] p-6 sm:p-8 relative overflow-hidden">
-              <div className="absolute inset-0 bg-blueprint" aria-hidden />
-              <div className="relative">
-                <p className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.16em] text-[#ffd166]">
-                  <MapPin size={14} /> {t.contact.addressTitle}
-                </p>
-                <p className="font-display font-bold text-[16px] sm:text-[18px] leading-relaxed mt-2">
-                  {lang === 'hi' ? contactInfo.addressHi : contactInfo.addressEn}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2.5 mt-5">
-                  <a href={contactInfo.mapsUrl} target="_blank" rel="noreferrer" className="btn-tactile inline-flex items-center justify-center gap-2 font-bold bg-white text-[#0a1a5c] px-5 py-3 rounded-full text-[14px]">
-                    <Navigation size={15} /> {t.contact.directions}
-                  </a>
-                  <a href={contactInfo.whatsapp} target="_blank" rel="noreferrer" className="btn-tactile inline-flex items-center justify-center gap-2 font-bold bg-[#25D366] px-5 py-3 rounded-full text-[14px]">
-                    <MessageCircle size={15} /> {t.contact.whatsapp}
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-[24px] p-6 sm:p-7">
-              <p className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.16em] text-[#1a33a3]">
-                <Phone size={14} /> {t.contact.phoneTitle}
-              </p>
-              <div className="grid sm:grid-cols-2 gap-3 mt-3">
-                {contactInfo.phones.map((p, i) => (
-                  <a key={p} href={contactInfo.phoneLinks[i]} className="btn-tactile rounded-2xl border border-slate-200 bg-slate-50 hover:border-[#2f7bff] hover:bg-white px-4 py-3.5 transition">
-                    <span className="block text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">{i === 0 ? 'Line 1' : 'Line 2'}</span>
-                    <span className="block font-display font-extrabold text-[16px] text-[#0a1a5c] mt-0.5">{p}</span>
-                  </a>
-                ))}
-              </div>
-              <p className="flex items-center gap-2 text-[13px] text-slate-500 mt-4">
-                <Clock size={14} /> {t.contact.hours}
-              </p>
-            </div>
-
-            {/* map placeholder */}
-            <div className="rounded-[24px] overflow-hidden border border-slate-200 bg-[#e9eefb] min-h-[220px] relative">
-              <div className="absolute inset-0 bg-blueprint-dark" aria-hidden />
-              <div className="relative h-full min-h-[220px] grid place-items-center p-8 text-center">
-                <div>
-                  <span className="mx-auto w-12 h-12 grid place-items-center rounded-2xl bg-[#0a1a5c] text-white shadow-lg">
-                    <MapPin size={22} />
-                  </span>
-                  <p className="font-bold text-[#0a1a5c] text-[14.5px] mt-3">{t.contact.mapNote}</p>
-                  <a href={contactInfo.mapsUrl} target="_blank" rel="noreferrer" className="inline-block mt-2 text-[13.5px] font-bold text-[#1a33a3] underline underline-offset-4">
-                    {t.contact.openMaps} →
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {showForm && (
-          <Reveal delay={0.1} className="h-full">
-            <div id="enquiry" className="scroll-mt-24">
-              <EnquiryForm />
-            </div>
-          </Reveal>
-        )}
+    <section aria-label="Contact" className="relative bg-[#070b1a] py-24 sm:py-36 overflow-hidden noise scanlines">
+      <div className="absolute inset-0 bg-blueprint opacity-60" aria-hidden />
+      <motion.div className="orb w-[600px] h-[600px] bg-[#ff7a00]/12 bottom-[-150px] left-1/2 -translate-x-1/2" aria-hidden />
+      <div className="relative z-[2] max-w-6xl mx-auto px-5 sm:px-8 text-center">
+        <div className="flex justify-center">
+          <Eyebrow>{t.contact.eyebrow}</Eyebrow>
+        </div>
+        <h2 className="display-mega text-[13vw] sm:text-[72px] lg:text-[104px] mt-4">
+          <RevealText>LET&rsquo;S BUILD</RevealText>
+          <RevealText delay={0.06}>
+            YOUR <span className="text-gradient-gold">NEXT STEP.</span>
+          </RevealText>
+        </h2>
+        <p className="text-white/55 mt-5 max-w-xl mx-auto text-[15px] sm:text-[17px]">{t.contact.sub}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-10 max-w-4xl mx-auto">
+          {actions.map((a, i) => (
+            <MagneticButton key={a.label + i}>
+              <motion.a
+                href={a.href}
+                target={a.href.startsWith('http') ? '_blank' : undefined}
+                rel={a.href.startsWith('http') ? 'noreferrer' : undefined}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                data-cursor="OPEN"
+                className={`btn-tactile flex flex-col items-center gap-2.5 rounded-3xl px-5 py-7 border font-extrabold text-[13px] tracking-widest ${
+                  a.primary
+                    ? 'bg-gradient-to-br from-[#ff7a00] to-[#ffb000] border-transparent text-white btn-glow-orange'
+                    : 'bg-white/[0.05] border-white/12 text-white hover:border-[#00a8ff]/50 hover:bg-white/[0.09]'
+                }`}
+              >
+                <a.icon size={24} />
+                {a.label.toUpperCase()}
+              </motion.a>
+            </MagneticButton>
+          ))}
+        </div>
+        <p className="font-mono text-[12px] text-white/40 mt-8 tracking-widest">{contactInfo.phones.join('  •  ')}</p>
       </div>
     </section>
   );

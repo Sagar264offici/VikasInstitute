@@ -1,214 +1,218 @@
 import { Link } from 'react-router-dom';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { ArrowRight, Phone, Sparkles, Code2, BrainCircuit, Monitor, Wifi } from 'lucide-react';
+import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
+import { ArrowRight, ArrowDown, Phone, Sparkles } from 'lucide-react';
+import { useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { contactInfo } from '../data/contact';
-
-function useMouseTilt() {
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const rx = useTransform(my, [-0.5, 0.5], [6, -6]);
-  const ry = useTransform(mx, [-0.5, 0.5], [-8, 8]);
-  const glowX = useTransform(mx, [-0.5, 0.5], ['30%', '70%']);
-  return { mx, my, rx, ry, glowX };
-}
+import MagneticButton from '../components/MagneticButton';
 
 export default function Hero() {
-  const { t } = useLanguage();
-  const { mx, my, rx, ry, glowX } = useMouseTilt();
+  const { t, lang } = useLanguage();
+  const ref = useRef<HTMLElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 60, damping: 20 });
+  const sy = useSpring(my, { stiffness: 60, damping: 20 });
+
+  const spotX = useTransform(sx, [-0.5, 0.5], ['35%', '65%']);
+  const spotY = useTransform(sy, [-0.5, 0.5], ['30%', '60%']);
+  const imgX = useTransform(sx, [-0.5, 0.5], [-8, 8]);
+  const imgY = useTransform(sy, [-0.5, 0.5], [-6, 6]);
+  const gridX = useTransform(sx, [-0.5, 0.5], [-14, 14]);
+
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+  const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
 
   return (
     <section
+      ref={ref}
       aria-label="Introduction"
-      className="relative overflow-hidden bg-[#060f38] text-white"
+      className="relative min-h-[100svh] overflow-hidden bg-[#050816] text-white flex flex-col noise scanlines"
       onMouseMove={(e) => {
         const r = e.currentTarget.getBoundingClientRect();
         mx.set((e.clientX - r.left) / r.width - 0.5);
         my.set((e.clientY - r.top) / r.height - 0.5);
       }}
     >
-      {/* backdrop */}
-      <div className="absolute inset-0 bg-blueprint" aria-hidden />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a1a5c]/30 to-[#060f38]" aria-hidden />
-      <motion.div className="absolute top-[-120px] w-[520px] h-[520px] rounded-full bg-[#2f7bff]/30 blur-[130px]" style={{ left: glowX }} aria-hidden />
-      <div className="absolute bottom-[-140px] right-[-80px] w-[420px] h-[420px] rounded-full bg-[#ff8a1e]/25 blur-[120px]" aria-hidden />
+      {/* light field */}
+      <motion.div className="absolute inset-0" style={{ opacity: fade }} aria-hidden>
+        <motion.div className="absolute inset-0 bg-blueprint" style={{ x: gridX }} />
+        <motion.div className="orb w-[60vw] h-[60vw] max-w-[720px] max-h-[720px] bg-[#1a33a3]/50 top-[-15%] left-1/2 -translate-x-1/2" style={{ x: spotX }} />
+        <div className="orb w-[420px] h-[420px] bg-[#00a8ff]/20 top-[20%] left-[-120px]" />
+        <div className="orb w-[380px] h-[380px] bg-[#ff7a00]/16 bottom-[5%] right-[-100px]" />
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full blur-[120px] bg-[radial-gradient(circle,rgba(0,168,255,0.22),transparent_65%)]"
+          style={{ left: spotX, top: spotY, x: '-50%', y: '-50%' }}
+        />
+        {/* giant ghost type */}
+        <span aria-hidden className="absolute bottom-[2%] left-1/2 -translate-x-1/2 font-display font-extrabold text-[18vw] leading-none text-transparent whitespace-nowrap select-none pointer-events-none" style={{ WebkitTextStroke: '1px rgba(140,175,255,0.08)' }}>
+          VIKAS IT
+        </span>
+      </motion.div>
 
-      {/* floating icons - desktop */}
-      <div className="hidden lg:block" aria-hidden>
-        {[
-          { Icon: Code2, x: '8%', y: '22%', d: 0 },
-          { Icon: BrainCircuit, x: '88%', y: '20%', d: 1.2 },
-          { Icon: Monitor, x: '90%', y: '66%', d: 2 },
-          { Icon: Wifi, x: '6%', y: '68%', d: 0.6 },
-        ].map(({ Icon, x, y, d }, i) => (
-          <motion.span
-            key={i}
-            className="absolute w-12 h-12 grid place-items-center rounded-2xl bg-white/8 border border-white/15 text-[#8db4ff] animate-floaty"
-            style={{ left: x, top: y, animationDelay: `${d}s` }}
-          >
-            <Icon size={20} />
-          </motion.span>
-        ))}
-      </div>
+      <motion.div style={{ opacity: fade, y: heroY }} className="relative z-[2] flex-1 flex flex-col justify-center max-w-7xl mx-auto w-full px-5 sm:px-8 pt-32 pb-10">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.6 }}>
+          <span className="inline-flex items-center gap-2 text-[11px] sm:text-[12px] font-extrabold tracking-[0.18em] bg-white/6 border border-white/15 rounded-full px-4 py-2 text-[#ffd166] backdrop-blur">
+            <Sparkles size={13} /> {t.hero.badge}
+          </span>
+        </motion.div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-14 sm:pt-20 sm:pb-24 grid lg:grid-cols-[1.05fr_0.95fr] gap-10 items-center">
-        {/* copy */}
-        <div>
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <span className="inline-flex items-center gap-2 text-[12px] sm:text-[13px] font-bold bg-white/10 border border-white/20 rounded-full px-4 py-2 text-[#ffd166]">
-              <Sparkles size={14} /> {t.hero.badge}
-            </span>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.08 }}
-            className="font-display font-extrabold tracking-[0.14em] text-[#8db4ff] text-[13px] sm:text-[15px] mt-5"
-          >
-            {t.hero.institute}
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
-            className="text-white/60 italic text-[14px] sm:text-[16px] mt-1"
-          >
-            “{t.hero.tagline}”
-          </motion.p>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 26, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 0.8, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display font-extrabold tracking-tight text-[34px] leading-[1.05] sm:text-[56px] lg:text-[60px] mt-4"
-          >
-            {t.hero.headlineA}
-            <br />
-            <span className="text-gradient-gold">{t.hero.headlineB}</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-white/70 text-[15px] sm:text-[18px] leading-relaxed mt-5 max-w-xl"
-          >
-            {t.hero.sub}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-3 mt-7"
-          >
-            <Link
-              to="/courses"
-              className="btn-tactile inline-flex items-center justify-center gap-2 font-bold text-[16px] text-white bg-gradient-to-r from-[#2456e6] to-[#2f7bff] px-8 py-4 rounded-full shadow-2xl shadow-blue-600/40 min-h-[56px]"
+        <div className="mt-6 grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-end">
+          <div>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.7 }}
+              className="font-mono text-[12px] tracking-[0.35em] text-[#5b9bff] font-bold"
             >
-              {t.hero.primaryCta} <ArrowRight size={18} />
-            </Link>
-            <div className="grid grid-cols-2 sm:flex gap-3">
-              <Link
-                to="/contact"
-                className="btn-tactile inline-flex items-center justify-center font-bold text-[15px] bg-white/10 border border-white/25 px-6 py-4 rounded-full hover:bg-white/20 min-h-[56px]"
-              >
-                {t.hero.secondaryCta}
-              </Link>
-              <a
-                href={contactInfo.phoneLinks[0]}
-                className="btn-tactile inline-flex items-center justify-center gap-2 font-bold text-[15px] bg-gradient-to-r from-[#ff7a1a] to-[#ffb020] px-6 py-4 rounded-full shadow-xl shadow-orange-900/40 min-h-[56px]"
-              >
-                <Phone size={16} /> {t.nav.callNow}
-              </a>
-            </div>
-          </motion.div>
+              {t.hero.institute} — RISHIKESH • UTTARAKHAND
+            </motion.p>
+            {lang === 'hi' ? (
+              <h1 className="display-mega text-[10.5vw] sm:text-[54px] lg:text-[68px] mt-3 leading-[1.18]">
+                <span className="block overflow-hidden pb-1">
+                  <motion.span initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 1.75, ease: [0.22, 1, 0.36, 1] }} className="block">
+                    {t.hero.headlineA}
+                  </motion.span>
+                </span>
+                <span className="block overflow-hidden pb-2">
+                  <motion.span initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 1.9, ease: [0.22, 1, 0.36, 1] }} className="block text-gradient-gold">
+                    {t.hero.headlineB}
+                  </motion.span>
+                </span>
+              </h1>
+            ) : (
+              <h1 className="display-mega text-[15vw] sm:text-[84px] lg:text-[104px] mt-3">
+                <span className="block overflow-hidden">
+                  <motion.span initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 1.75, ease: [0.22, 1, 0.36, 1] }} className="block">
+                    DON&rsquo;T JUST
+                  </motion.span>
+                </span>
+                <span className="block overflow-hidden">
+                  <motion.span initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 1.85, ease: [0.22, 1, 0.36, 1] }} className="block text-white/35">
+                    FOLLOW THE
+                  </motion.span>
+                </span>
+                <span className="block overflow-hidden">
+                  <motion.span initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 1.95, ease: [0.22, 1, 0.36, 1] }} className="block">
+                    FUTURE<span className="text-[#ff7a00]">.</span>
+                  </motion.span>
+                </span>
+                <span className="block overflow-hidden">
+                  <motion.span initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.9, delay: 2.05, ease: [0.22, 1, 0.36, 1] }} className="block text-gradient-gold">
+                    CREATE IT WITH AI.
+                  </motion.span>
+                </span>
+              </h1>
+            )}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.2, duration: 0.7 }}
+              className="text-white/60 text-[15px] sm:text-[18px] leading-relaxed mt-6 max-w-xl"
+            >
+              {t.hero.sub}
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.3, duration: 0.7 }}
+              className="flex flex-col sm:flex-row gap-3 mt-8"
+            >
+              <MagneticButton>
+                <Link
+                  to="/courses"
+                  data-cursor="EXPLORE"
+                  className="btn-tactile btn-glow-blue inline-flex items-center justify-center gap-2 font-extrabold text-[15px] text-white bg-gradient-to-r from-[#2456e6] to-[#00a8ff] px-8 py-4 rounded-full min-h-[56px] tracking-wide"
+                >
+                  {t.hero.primaryCta.toUpperCase()} <ArrowRight size={18} />
+                </Link>
+              </MagneticButton>
+              <MagneticButton>
+                <div className="grid grid-cols-2 sm:flex gap-3">
+                  <Link
+                    to="/contact"
+                    className="btn-tactile inline-flex items-center justify-center font-bold text-[14px] bg-white/6 border border-white/20 px-6 py-4 rounded-full hover:bg-white/12 min-h-[56px] backdrop-blur"
+                  >
+                    {t.hero.secondaryCta.toUpperCase()}
+                  </Link>
+                  <a
+                    href={contactInfo.phoneLinks[0]}
+                    className="btn-tactile inline-flex items-center justify-center gap-2 font-bold text-[14px] bg-gradient-to-r from-[#ff7a00] to-[#ffb000] px-6 py-4 rounded-full min-h-[56px]"
+                  >
+                    <Phone size={15} /> {t.nav.callNow.toUpperCase()}
+                  </a>
+                </div>
+              </MagneticButton>
+            </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}
-            className="flex items-center gap-5 sm:gap-8 mt-8 pt-6 border-t border-white/12"
-          >
-            {t.hero.stats.map((s) => (
-              <div key={s.label}>
-                <p className="font-display font-extrabold text-[20px] sm:text-[26px] text-white">{s.value}</p>
-                <p className="text-white/55 text-[12px] sm:text-[13px] font-medium">{s.label}</p>
+          {/* interactive visual */}
+          <motion.div style={{ x: imgX, y: imgY }} className="relative hidden lg:block" aria-hidden>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 2.1, duration: 1 }}
+              className="relative rounded-[28px] overflow-hidden border border-white/15 bg-gradient-to-br from-[#0a1024] to-[#060f38] shadow-[0_40px_120px_-30px_rgba(0,168,255,0.4)]"
+            >
+              <img src="/gallery/poster-1.jpg" alt="" loading="eager" className="w-full aspect-[4/5] object-cover opacity-80" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050816] via-transparent to-[#050816]/40" />
+              {/* neural rings */}
+              <div className="absolute top-6 right-6 w-24 h-24">
+                <span className="absolute inset-0 rounded-full border border-[#00a8ff]/50 animate-spin-slow" style={{ borderTopColor: 'transparent' }} />
+                <span className="absolute inset-3 rounded-full border border-[#ff7a00]/40 animate-spin-slow" style={{ animationDirection: 'reverse' }} />
+                <span className="absolute inset-0 grid place-items-center font-extrabold text-[13px] bg-[#050816]/60 rounded-full backdrop-blur border border-white/10">AI</span>
               </div>
-            ))}
-            <p className="hidden sm:block ml-auto text-[12px] font-bold tracking-[0.2em] text-white/40 uppercase">{t.hero.mantra}</p>
+              <div className="absolute bottom-0 left-0 right-0 p-5">
+                <div className="rounded-2xl bg-[#040b28]/85 border border-white/12 backdrop-blur p-4">
+                  <p className="font-mono text-[10px] text-white/40 tracking-widest">{t.hero.codeLabel} — student.py</p>
+                  <pre className="font-mono text-[12px] leading-relaxed mt-1.5 overflow-hidden">
+                    <code className="text-[#9fc0ff]">def bright_future(skills):</code>{'\n'}
+                    <code className="text-white/80">    practice(skills)</code>{'\n'}
+                    <code className="text-[#ffd166]">    return &quot;{lang === 'hi' ? 'आज सीखें, कल नेतृत्व करें' : 'Learn Today, Lead Tomorrow'}&quot;</code>
+                  </pre>
+                </div>
+              </div>
+            </motion.div>
+            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity }} className="absolute -left-8 top-10 glass-pill rounded-2xl px-4 py-3">
+              <p className="text-[13px] font-extrabold">✓ {t.lab.floating1t}</p>
+              <p className="text-[11px] text-white/55">{t.lab.floating1s}</p>
+            </motion.div>
+            <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity }} className="absolute -right-5 bottom-24 glass-pill rounded-2xl px-4 py-3">
+              <p className="text-[13px] font-extrabold">🎓 {t.common.admissionsOpen}</p>
+              <p className="text-[11px] text-[#ffab2e] font-bold">{lang === 'hi' ? 'आज ही जुड़ें' : 'Join Today'}</p>
+            </motion.div>
           </motion.div>
         </div>
 
-        {/* visual */}
+        {/* stats strip */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 24 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          style={{ rotateX: rx, rotateY: ry, transformPerspective: 1000 }}
-          className="relative mx-auto w-full max-w-[520px]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5 }}
+          className="flex items-center gap-6 sm:gap-10 mt-10 pt-6 border-t border-white/10"
         >
-          {/* lab card */}
-          <div className="relative rounded-[26px] overflow-hidden border border-white/20 bg-gradient-to-br from-[#10237a] to-[#060f38] shadow-[0_40px_100px_-30px_rgba(47,123,255,0.5)]">
-            {/* fake lab scene built with CSS */}
-            <div className="relative aspect-[4/3] sm:aspect-[16/11] p-5 sm:p-6">
-              <div className="absolute inset-0 opacity-40" aria-hidden>
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2">
-                  {['AI', 'JAVA', 'PYTHON', 'C'].map((w) => (
-                    <span key={w} className="text-[10px] font-extrabold tracking-widest px-2.5 py-1 rounded-md bg-white/10 border border-white/15 text-[#9fc0ff]">{w}</span>
-                  ))}
-                </div>
-              </div>
-              {/* monitors row */}
-              <div className="relative mt-10 grid grid-cols-4 gap-2 sm:gap-3">
-                {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 + i * 0.07 }}
-                    className="rounded-lg bg-[#0b1c5e] border border-[#2f7bff]/30 overflow-hidden"
-                  >
-                    <div className="h-10 sm:h-14 bg-gradient-to-b from-[#1a3aa8] to-[#0b1c5e] p-1.5">
-                      <div className="h-1 w-2/3 rounded bg-[#5b9bff]/70 mb-1" />
-                      <div className="h-1 w-1/2 rounded bg-white/25 mb-1" />
-                      <div className="h-1 w-3/4 rounded bg-[#ffb020]/60" />
-                    </div>
-                    <div className="h-1.5 bg-[#060f38] mx-auto w-1/2 rounded-b" />
-                  </motion.div>
-                ))}
-              </div>
-              {/* AI orb */}
-              <div className="absolute top-4 right-4 flex items-center gap-2 bg-[#060f38]/70 border border-[#2f7bff]/40 rounded-full pl-2 pr-3 py-1.5 backdrop-blur">
-                <span className="w-7 h-7 grid place-items-center rounded-full bg-gradient-to-br from-[#2f7bff] to-[#7db4ff] text-white text-[11px] font-extrabold">AI</span>
-                <span className="text-[11px] font-bold text-[#9fc0ff] tracking-widest">LEARN • PRACTICE • GROW</span>
-              </div>
-              {/* code window */}
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute bottom-4 left-4 right-4 sm:left-6 sm:right-6 rounded-2xl bg-[#040b28]/90 border border-white/15 backdrop-blur p-3.5 sm:p-4 shadow-2xl"
-              >
-                <div className="flex items-center gap-1.5 mb-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-400" />
-                  <span className="ml-2 text-[10.5px] font-mono text-white/40">{t.hero.codeLabel} — student.py</span>
-                </div>
-                <pre className="font-mono text-[11px] sm:text-[12.5px] leading-relaxed overflow-hidden">
-                  <code className="text-[#9fc0ff]">{'def bright_future(skills):'}</code>{'\n'}
-                  <code className="text-white/80">{'    practice(skills)'}</code>{'\n'}
-                  <code className="text-[#ffd166]">{'    return "Learn Today, Lead Tomorrow"'}</code>
-                </pre>
-              </motion.div>
+          {t.hero.stats.map((s) => (
+            <div key={s.label}>
+              <p className="font-display font-extrabold text-[22px] sm:text-[28px]">{s.value}</p>
+              <p className="text-white/45 text-[11px] sm:text-[12px] font-semibold tracking-wider uppercase">{s.label}</p>
             </div>
-          </div>
-
-          {/* floating chips */}
-          <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5.5, repeat: Infinity }} className="absolute -left-3 sm:-left-8 top-1/3 bg-white text-[#0a1a5c] rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-2.5">
-            <span className="w-9 h-9 grid place-items-center rounded-xl bg-green-100 text-green-700 font-extrabold text-[13px]">✓</span>
-            <span><span className="block text-[13px] font-extrabold leading-none">Practical</span><span className="block text-[11px] text-slate-500 mt-1">Daily lab sessions</span></span>
-          </motion.div>
-          <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity }} className="absolute -right-2 sm:-right-6 bottom-16 bg-white text-[#0a1a5c] rounded-2xl shadow-2xl px-4 py-3">
-            <span className="block text-[13px] font-extrabold leading-none">🎓 {t.common.admissionsOpen}</span>
-            <span className="block text-[11px] text-[#ff7a1a] font-bold mt-1">Join Today</span>
-          </motion.div>
+          ))}
+          <p className="hidden md:block ml-auto font-mono text-[11px] tracking-[0.3em] text-white/35">{t.hero.mantra.toUpperCase()}</p>
         </motion.div>
-      </div>
+      </motion.div>
 
-      {/* mantra strip mobile */}
-      <p className="sm:hidden relative text-center text-[11px] font-bold tracking-[0.22em] text-white/40 uppercase pb-8">{t.hero.mantra}</p>
+      <motion.a
+        href="#manifesto"
+        style={{ opacity: fade }}
+        className="relative z-[2] mx-auto mb-6 flex flex-col items-center gap-2 text-white/40 hover:text-white transition"
+        aria-label="Scroll to explore"
+      >
+        <span className="font-mono text-[10px] tracking-[0.35em]">SCROLL TO EXPLORE</span>
+        <motion.span animate={{ y: [0, 8, 0] }} transition={{ duration: 1.8, repeat: Infinity }}>
+          <ArrowDown size={18} />
+        </motion.span>
+      </motion.a>
     </section>
   );
 }
