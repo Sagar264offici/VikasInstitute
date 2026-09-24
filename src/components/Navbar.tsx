@@ -41,7 +41,7 @@ export default function Navbar() {
         scrolled && 'shadow-[0_1px_12px_rgba(0,0,0,0.06)]'
       )}
     >
-      <nav aria-label="Primary" className="wrap flex items-center justify-between gap-3 h-16">
+      <nav aria-label="Primary" className="wrap flex items-center justify-between gap-3 max-[400px]:gap-2 h-16">
         <Link to="/" aria-label="Vikas IT Institute home" className="shrink-0">
           <Logo />
         </Link>
@@ -79,7 +79,7 @@ export default function Navbar() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label={open ? (lang === 'hi' ? 'मेनू बंद करें' : 'Close menu') : lang === 'hi' ? 'मेनू खोलें' : 'Open menu'}
-            className="w-11 h-11 grid place-items-center rounded-md border border-[#dadada] text-[#111]"
+            className="w-11 h-11 max-[400px]:w-10 max-[400px]:h-10 grid place-items-center rounded-md border border-[#dadada] text-[#111]"
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>

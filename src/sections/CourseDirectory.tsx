@@ -47,7 +47,7 @@ export function CourseDirectory({ limit, showFilter = true }: { limit?: number; 
   return (
     <div>
       {showFilter && (
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap" role="tablist" aria-label="Course filters">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 max-[399px]:-mx-3 max-[399px]:px-3 sm:mx-0 sm:px-0 sm:flex-wrap" role="tablist" aria-label="Course filters">
           {(['All', ...groupKeys] as const).map((key) => {
             const label = key === 'All' ? t.courses.filterAll : t.courses.groups[groupKeys.indexOf(key as CourseGroup)];
             const isActive = active === key;

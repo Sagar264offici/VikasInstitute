@@ -87,7 +87,7 @@ export default function Hero() {
                 className="aspect-[4/3] lg:aspect-[4/3.4]"
               />
             </div>
-            <figcaption className="text-[12.5px] text-[#6b6b6b] mt-3 flex items-center justify-between gap-3">
+            <figcaption className="text-[12.5px] text-[#6b6b6b] mt-3 flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
               <span>{t.about.cardTitle} — {t.about.cardSub}</span>
               <span className="font-mono text-[11px] tracking-[0.14em] shrink-0">{t.hero.mantra}</span>
             </figcaption>

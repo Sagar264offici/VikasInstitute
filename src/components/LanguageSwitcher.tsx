@@ -18,7 +18,7 @@ export default function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
           className={cn(
-            'min-h-[36px] px-3 rounded-full transition-colors',
+            'min-h-[36px] px-3 max-[400px]:min-h-[34px] max-[400px]:px-2 rounded-full transition-colors',
             lang === l
               ? 'bg-[#111] text-white'
               : dark
